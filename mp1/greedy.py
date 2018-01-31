@@ -23,42 +23,39 @@ pacman_pos = (pacman_pos[0][0], pacman_pos[1][0])
 goal_positions = np.where(grid == '.')
 goal_positions = [(goal_positions[0][n], goal_positions[1][n]) for n in range(len(goal_positions[0]))]
 
-import sys
 import heapq
+
+def heuristics(pos1, pos2):
+  return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[0])
 
 goal = goal_positions[0]
 prev = {}
 visited = {pos: False for pos in graph}
 
-def gbfs():
-  visited[pacman_pos] = True
-  hq = []
-  heapq.heappush(hq, (heuristics(pacman_pos, goal), pacman_pos))
-  while hq:
-    dist, min_node = heapq.heappop(hq)
-    if min_node == goal:
-      break
-    for next_node in graph[min_node]:
-      if visited[next_node] == False:
-        visited[next_node] = True
-        heapq.heappush(hq, (heuristics(next_node, goal), next_node))
-        prev[next_node] = min_node
-
-def heuristics(pos1, pos2):
-  return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[0])
-
-gbfs()
+visited[pacman_pos] = True
+hq = []
+heapq.heappush(hq, (heuristics(pacman_pos, goal), pacman_pos))
+while hq:
+  dist, min_node = heapq.heappop(hq)
+  if min_node == goal:
+    break
+  for next_node in graph[min_node]:
+    if visited[next_node] == False:
+      visited[next_node] = True
+      heapq.heappush(hq, (heuristics(next_node, goal), next_node))
+      prev[next_node] = min_node
 
 path = []
 current = goal
 while current in prev:
   current = prev[current]
   path.append(current)
-print(path)
-print(len(path))
 
 for pos in path[:-1]:
   grid[pos] = '.'
 
+print(list(visited.values()).count(True))
+print(path)
+print(len(path))
 for row in grid.T:
   print(''.join(row))
