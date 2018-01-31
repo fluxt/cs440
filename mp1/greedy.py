@@ -6,9 +6,6 @@ grid = np.array([[c for c in line if (c != '\n' and c != '\r')] for line in file
 
 width, height = grid.shape
 
-print(width)
-print(height)
-
 graph = {(x, y): [] for x in range(width) for y in range(height) if grid[x][y] != '%'}
 
 for (x, y) in graph:
@@ -21,5 +18,10 @@ for (x, y) in graph:
   if (y-1) >= 0 and grid[x, y-1] != '%':
     graph[(x, y)].append((x, y-1)) # up
 
-print(graph[(2, 1)])
+pacman_pos = np.where(grid == 'P')
+pacman_pos = (pacman_pos[0][0], pacman_pos[1][0])
 
+goal_positions = np.where(grid == '.')
+goal_positions = [(goal_positions[0][n], goal_positions[1][n]) for n in range(len(goal_positions[0]))]
+
+print(goal_positions)
