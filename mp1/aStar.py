@@ -37,12 +37,10 @@ g_score[pacman_pos] = 0
 
 f_score = {pos : float("inf") for pos in graph}
 
-path = []
-
 while(open_set):
 	current = min(open_set, key= lambda x : f_score[x])
 	if (current == goal_positions[0]):
-		path.append(current)
+		path = [current]
 		break
 
 	open_set.remove(current)
@@ -66,6 +64,8 @@ while current in came_from:
 	path.append(current)
 print(path)
 print(len(path))
+
+print(len(closed_set))
 
 for pos in path[:-1]:
 	grid[pos] = '.'
