@@ -43,4 +43,4 @@ if __name__ == "__main__":
 	grid_output, path = gbfs(grid, graph, pacman_position, goal_positions)
 	
 	utils.print_grid(grid_output)
-	utils.print_grid_to_file(grid_output, "grid_output.txt")
+	utils.print_grid_to_file(grid_output, "greedy_output.txt")
