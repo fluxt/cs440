@@ -49,3 +49,7 @@ def print_grid_to_file(grid, filename):
 	with open(filename, 'w+') as f:
 		for row in grid:
 			f.write(''.join(row)+'\n')
+
+def draw_solution_to_grid(grid, path):
+	for pos in path:
+		grid[pos] = '.'
