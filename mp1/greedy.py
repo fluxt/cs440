@@ -1,61 +1,46 @@
 import numpy as np
-import fileinput
-
-grid = np.array([[c for c in line if (c != '\n' and c != '\r')] for line in fileinput.input()]).T
-
-width, height = grid.shape
-
-graph = {(x, y): [] for x in range(width) for y in range(height) if grid[x][y] != '%'}
-
-for (x, y) in graph:
-  if (x+1) < width and grid[x+1, y] != '%':
-    graph[(x, y)].append((x+1, y)) #right
-  if (x-1) >= 0 and grid[x-1, y] != '%':
-    graph[(x, y)].append((x-1, y)) #left
-  if (y+1) < height and grid[x, y+1] != '%':
-    graph[(x, y)].append((x, y+1)) #down
-  if (y-1) >= 0 and grid[x, y-1] != '%':
-    graph[(x, y)].append((x, y-1)) # up
-
-pacman_pos = np.where(grid == 'P')
-pacman_pos = (pacman_pos[0][0], pacman_pos[1][0])
-
-goal_positions = np.where(grid == '.')
-goal_positions = [(goal_positions[0][n], goal_positions[1][n]) for n in range(len(goal_positions[0]))]
-
 import heapq
+import utils
 
 def heuristics(pos1, pos2):
-  return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[0])
+	return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[0])
 
-goal = goal_positions[0]
-prev = {}
-visited = {pos: False for pos in graph}
+def gbfs(grid, graph, pacman_position, goal_positions):
+	goal = goal_positions[0]
+	prev = {}
+	visited = {pos: False for pos in graph}
+	visited[pacman_position] = True
+	hq = []
+	heapq.heappush(hq, (heuristics(pacman_position, goal), pacman_position))
+	while hq:
+		dist, min_node = heapq.heappop(hq)
+		if min_node == goal:
+			break
+		for next_node in graph[min_node]:
+			if visited[next_node] == False:
+				visited[next_node] = True
+				heapq.heappush(hq, (heuristics(next_node, goal), next_node))
+				prev[next_node] = min_node
 
-visited[pacman_pos] = True
-hq = []
-heapq.heappush(hq, (heuristics(pacman_pos, goal), pacman_pos))
-while hq:
-  dist, min_node = heapq.heappop(hq)
-  if min_node == goal:
-    break
-  for next_node in graph[min_node]:
-    if visited[next_node] == False:
-      visited[next_node] = True
-      heapq.heappush(hq, (heuristics(next_node, goal), next_node))
-      prev[next_node] = min_node
+	path = []
+	current = goal
+	while current in prev:
+		current = prev[current]
+		path.append(current)
 
-path = []
-current = goal
-while current in prev:
-  current = prev[current]
-  path.append(current)
+	for pos in path[:-1]:
+		grid[pos[0]][pos[1]] = '.'
 
-for pos in path[:-1]:
-  grid[pos] = '.'
+	# print(list(visited.values()).count(True))
+	# print(path)
+	# print(len(path))
 
-print(list(visited.values()).count(True))
-print(path)
-print(len(path))
-for row in grid.T:
-  print(''.join(row))
+	return grid, path
+
+if __name__ == "__main__":
+	grid, graph, pacman_position, goal_positions = utils.load_puzzle("part1/mediumMaze.txt")
+	
+	grid_output, path = gbfs(grid, graph, pacman_position, goal_positions)
+	
+	utils.print_grid(grid_output)
+	utils.print_grid_to_file(grid_output, "grid_output.txt")
