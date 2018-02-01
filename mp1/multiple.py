@@ -14,7 +14,7 @@ class Node():
 		return ("pos=" + str(self.pos) + "\ncollected=" + str(self.collected))
 
 
-grid, _, pacman_position, goal_positions = utils.load_puzzle("part1/tinySearch.txt")
+grid, _, pacman_position, goal_positions = utils.load_puzzle("part1/tinySearch.txt")#("part1/tinySearch.txt")
 init_node = Node(pacman_position, [False for p in goal_positions])
 x_size, y_size = grid.shape
 
@@ -23,18 +23,42 @@ def taxi_dist(pos1, pos2):
 
 def taxi_dist_or_inf(pos1, pos2):
 	dist = taxi_dist(pos1, pos2)
-	return dist if dist > 0 else 100000
+	return dist if dist > 0 else 10000
+
+def mst_size(adj_matrix):
+	vertex = 0
+	num_nodes = adj_matrix.shape[0]
+
+	MST = set()
+	edges = []
+	visited = set()
+
+	while len(MST) != num_nodes - 1:
+		visited.add(vertex)
+
+		for r in range(num_nodes):
+			if r != vertex:
+				edges.append((vertex, r, adj_matrix[vertex][r]))
+
+		min_edge = min(edges, key=lambda x: 10000 if x[1] in visited else x[2])
+
+		edges.remove(min_edge)
+		MST.add(min_edge)
+		vertex = min_edge[1]
+
+	return sum([e[2] for e in MST])
 
 def heuristic_cost_estimate(node):
 	#return max(node.collected.count(False), max([taxi_dist(g, node.pos) for g in goal_positions]))
 	#return node.collected.count(False)
 	all_nodes = [goal_positions[i] for i in range(len(goal_positions)) if not node.collected[i]]
 	all_nodes.append(node.pos)
-	#graph = np.array([[taxi_dist(pos1, pos2) for pos2 in all_nodes] for pos1 in all_nodes])
+	graph = np.array([[taxi_dist(pos1, pos2) for pos2 in all_nodes] for pos1 in all_nodes])
+	return mst_size(graph)
 
-	if (len(all_nodes) == 1):
-		return 0
-	return sum([min([taxi_dist_or_inf(n1, n2) for n2 in all_nodes]) for n1 in all_nodes]) / 2
+	#if (len(all_nodes) == 1):
+	#	return 0
+	#return sum([min([taxi_dist_or_inf(n1, n2) for n2 in all_nodes]) for n1 in all_nodes]) / 2
 
 def get_neighbors(node):
 	x, y = node.pos
