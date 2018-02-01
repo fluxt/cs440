@@ -51,5 +51,5 @@ def print_grid_to_file(grid, filename):
 			f.write(''.join(row)+'\n')
 
 def draw_solution_to_grid(grid, path):
-	for pos in path:
+	for pos in path[1:]:
 		grid[pos] = '.'
