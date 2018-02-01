@@ -3,7 +3,7 @@ import utils
 
 
 def heuristic_cost_estimate(pos, goal_positions):
-	return abs(pos[0] - goal_positions[0][0]) + abs(pos[1] - goal_positions[0][1])
+	return  abs(pos[0] - goal_positions[0][0]) + abs(pos[1] - goal_positions[0][1])
 
 def a_star(graph, pacman_pos, goal_positions):
 	closed_set = set()
@@ -45,14 +45,14 @@ def a_star(graph, pacman_pos, goal_positions):
 	#print(path)
 	#print(len(path))
 
-	#print(len(closed_set))
+	print(len(closed_set))
 
 	path.reverse()
 	return path
 	#print_grid(grid)
 
 if __name__ == "__main__":
-	grid, graph, pac_pos, goal_poss = utils.load_puzzle("part1/mediumMaze.txt")
+	grid, graph, pac_pos, goal_poss = utils.load_puzzle("part1/openMaze.txt")
 
 	path = a_star(graph, pac_pos, goal_poss)
 	utils.draw_solution_to_grid(grid, path)
