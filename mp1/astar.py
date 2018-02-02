@@ -45,7 +45,7 @@ def a_star(graph, pacman_pos, goal_positions):
 	#print(path)
 	#print(len(path))
 
-	print(len(closed_set))
+	#print(len(closed_set))
 
 	path.reverse()
 	return path
