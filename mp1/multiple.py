@@ -41,19 +41,26 @@ def mst_size(adj_matrix):
 	MST = set()
 	edges = []
 	visited = set()
+	min_edge = None
 
 	while len(MST) != num_nodes - 1:
 		visited.add(vertex)
 
 		for r in range(num_nodes):
 			if r != vertex:
-				edges.append((adj_matrix[vertex][r], vertex, r))
+				#edges.append((adj_matrix[vertex][r], vertex, r))
+				heapq.heappush(edges, (adj_matrix[vertex][r], vertex, r))
 
-		min_edge = min(edges, key=lambda x: 10000 if x[2] in visited else x[0])
-		edges.remove(min_edge)
+		while not min_edge:
+			min_edge = heapq.heappop(edges)
+			if (min_edge[2] in visited):
+				min_edge = None
+		#min_edge = min(edges, key=lambda x: 10000 if x[2] in visited else x[0])
+		#edges.remove(min_edge)
 
 		MST.add(min_edge)
 		vertex = min_edge[2]
+		min_edge = None
 
 	return sum([e[0] for e in MST])
 
