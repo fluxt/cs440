@@ -31,29 +31,14 @@ def bfs(graph, pacman_pos, goal_position):
 	return path, nodes_expanded
 
 if __name__ == "__main__":
-	grid, graph, pacman_position, goal_positions = utils.load_puzzle("part1/mediumMaze.txt")
-	path, nodes_expanded = bfs(graph, pacman_position, goal_positions[0])
-
-	utils.draw_solution_to_grid(grid, path)
-	utils.print_grid(grid)
-	print("path cost is  : ", len(path)-1)
-	print("nodes expanded: ", nodes_expanded)
-	print()
-
-	grid, graph, pacman_position, goal_positions = utils.load_puzzle("part1/bigMaze.txt")
-	path, nodes_expanded = bfs(graph, pacman_position, goal_positions[0])
-
-	utils.draw_solution_to_grid(grid, path)
-	utils.print_grid(grid)
-	print("path cost is  : ", len(path)-1)
-	print("nodes expanded: ", nodes_expanded)
-	print()
+	files = ["part1/mediumMaze.txt", "part1/bigMaze.txt", "part1/openMaze.txt"]
 	
-	grid, graph, pacman_position, goal_positions = utils.load_puzzle("part1/openMaze.txt")
-	path, nodes_expanded = bfs(graph, pacman_position, goal_positions[0])
+	for file in files:
+		grid, graph, pacman_position, goal_positions = utils.load_puzzle(file)
+		path, nodes_expanded = bfs(graph, pacman_position, goal_positions[0])
 
-	utils.draw_solution_to_grid(grid, path)
-	utils.print_grid(grid)
-	print("path cost is  : ", len(path)-1)
-	print("nodes expanded: ", nodes_expanded)
-	print()
+		utils.draw_solution_to_grid(grid, path)
+		utils.print_grid(grid)
+		print("path cost is  : ", len(path)-1)
+		print("nodes expanded: ", nodes_expanded)
+		print()
