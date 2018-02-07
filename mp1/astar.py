@@ -52,11 +52,29 @@ def a_star(graph, pacman_pos, goal_position):
 	#print_grid(grid)
 
 if __name__ == "__main__":
-	grid, graph, pac_pos, goal_poss = utils.load_puzzle("part1/openMaze.txt")
+	grid, graph, pacman_position, goal_positions = utils.load_puzzle("part1/mediumMaze.txt")
+	path, nodes_expanded = bfs(graph, pacman_position, goal_positions[0])
 
-	path = a_star(graph, pac_pos, goal_poss[0])
 	utils.draw_solution_to_grid(grid, path)
-
 	utils.print_grid(grid)
-	print(path)
-	print(len(path))
+	print("path cost is  : ", len(path)-1)
+	print("nodes expanded: ", nodes_expanded)
+	print()
+
+	grid, graph, pacman_position, goal_positions = utils.load_puzzle("part1/bigMaze.txt")
+	path, nodes_expanded = bfs(graph, pacman_position, goal_positions[0])
+
+	utils.draw_solution_to_grid(grid, path)
+	utils.print_grid(grid)
+	print("path cost is  : ", len(path)-1)
+	print("nodes expanded: ", nodes_expanded)
+	print()
+	
+	grid, graph, pacman_position, goal_positions = utils.load_puzzle("part1/openMaze.txt")
+	path, nodes_expanded = bfs(graph, pacman_position, goal_positions[0])
+
+	utils.draw_solution_to_grid(grid, path)
+	utils.print_grid(grid)
+	print("path cost is  : ", len(path)-1)
+	print("nodes expanded: ", nodes_expanded)
+	print()
