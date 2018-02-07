@@ -16,10 +16,10 @@ class Node():
 		return ("pos = " + str() + "collected=" + str(self.collected))
 
 # assume there is another goal underneath pacman's original position
-grid, simple_graph, pacman_position, goal_positions = utils.load_puzzle("part1/tinySearch.txt")
+grid, simple_graph, pacman_position, goal_positions = utils.load_puzzle("part1/mediumSearch.txt")
 goal_positions.append(pacman_position)
 num_goals = len(goal_positions)
-init_node = Node(num_goals - 1, [False for p in goal_positions if goal_positions != pacman_position])
+init_node = Node(num_goals - 1, [False if p != pacman_position else True for p in goal_positions])
 
 goal_distances = np.zeros((num_goals, num_goals), dtype=int)
 for i in range(num_goals):
@@ -28,7 +28,6 @@ for i in range(num_goals):
 		goal_distances[i][j] = dist
 		goal_distances[j][i] = dist
 	goal_distances[i][i] = 1
-print(goal_distances)
 print("Done with preprocessing")
 
 
@@ -76,14 +75,17 @@ def heuristic_cost_estimate(node):
 def get_neighbors(node):
 	ret = []
 	uncollected_indices = [i for i in range(num_goals) if not node.collected[i]]
-	for i in uncollected_indices:
-		new_collected = [True if i == node.pos else node.collected[i]  for i in range(num_goals)]
-		ret.append(Node(i, new_collected))
+	for idx in uncollected_indices:
+		new_collected = [True if i == idx else node.collected[i]  for i in range(num_goals)]
+		ret.append(Node(idx, new_collected))
 	return ret
 
 
 def is_finished(node):
 	return node.collected.count(False) == 0
+
+def get_path_cost(path):
+	return sum([goal_distances[path[i]][path[i+1]] for i in range(len(path) - 1)])
 
 def multiple_goal_a_star():
 	closed_set = set()
@@ -127,10 +129,9 @@ def multiple_goal_a_star():
 	while current in came_from:
 		current = came_from[current]
 		path.append(current.pos)
-	print("Nodes expanded: " + str(len(closed_set)))
 
 	path.reverse()
-	return path
+	return path, len(closed_set)
 
 def put_path_on_grid(path):
 	for i in range(1, len(path)):
@@ -138,16 +139,13 @@ def put_path_on_grid(path):
 		grid[pos[0]][pos[1]] = chr(i + 48) if i < 10 else chr(i + 87)
 
 def print_path(path):
-	print('Path: ' + str([goal_positions[i] for i in path]))
-
-def get_path_cost(path):
-	return sum([goal_distances[path[i]][path[i+1]] for i in range(len(path) - 1)])
+	print("Path: " + str([goal_positions[i] for i in path]))
 
 if __name__ == "__main__":
-	path = multiple_goal_a_star()
+	path, nodes_expanded = multiple_goal_a_star()
 
-	#print(grid)
 	put_path_on_grid(path)
 	utils.print_grid(grid)
 	print_path(path)
-	print(get_path_cost(path))
+	print("Path cost: " + str(get_path_cost(path)))
+	print("Nodes expanded: " + str(nodes_expanded))
