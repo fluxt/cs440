@@ -42,18 +42,13 @@ def a_star(graph, pacman_pos, goal_position):
 	while current in came_from:
 		current = came_from[current]
 		path.append(current)
-	#print(path)
-	#print(len(path))
-
-	#print(len(closed_set))
 
 	path.reverse()
-	return path
-	#print_grid(grid)
+	return path, len(closed_set)
 
 if __name__ == "__main__":
 	grid, graph, pacman_position, goal_positions = utils.load_puzzle("part1/mediumMaze.txt")
-	path, nodes_expanded = bfs(graph, pacman_position, goal_positions[0])
+	path, nodes_expanded = a_star(graph, pacman_position, goal_positions[0])
 
 	utils.draw_solution_to_grid(grid, path)
 	utils.print_grid(grid)
@@ -62,7 +57,7 @@ if __name__ == "__main__":
 	print()
 
 	grid, graph, pacman_position, goal_positions = utils.load_puzzle("part1/bigMaze.txt")
-	path, nodes_expanded = bfs(graph, pacman_position, goal_positions[0])
+	path, nodes_expanded = a_star(graph, pacman_position, goal_positions[0])
 
 	utils.draw_solution_to_grid(grid, path)
 	utils.print_grid(grid)
@@ -71,7 +66,7 @@ if __name__ == "__main__":
 	print()
 	
 	grid, graph, pacman_position, goal_positions = utils.load_puzzle("part1/openMaze.txt")
-	path, nodes_expanded = bfs(graph, pacman_position, goal_positions[0])
+	path, nodes_expanded = a_star(graph, pacman_position, goal_positions[0])
 
 	utils.draw_solution_to_grid(grid, path)
 	utils.print_grid(grid)
