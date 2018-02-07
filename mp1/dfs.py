@@ -28,8 +28,6 @@ def dfs(graph, pacman_pos, goal_position):
 	while n is not None:
 			path.insert(0,n)
 			n = parent[n]
-	print (path)
-	print(goal_position)
 	return path, nodes_expanded
 
 if __name__ == "__main__":
