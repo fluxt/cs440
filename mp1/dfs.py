@@ -33,16 +33,29 @@ def dfs(graph, pacman_pos, goal_position):
 	return path, nodes_expanded
 
 if __name__ == "__main__":
-	grid, graph, pacman_pos, goal_positions = utils.load_puzzle("part1/mediumMaze.txt")
-	path, nodes_expanded = dfs(graph, pacman_pos, goal_positions[0])
-	print(nodes_expanded)
-	print(len(path)-1)
+	grid, graph, pacman_position, goal_positions = utils.load_puzzle("part1/mediumMaze.txt")
+	path, nodes_expanded = dfs(graph, pacman_position, goal_positions[0])
+
 	utils.draw_solution_to_grid(grid, path)
 	utils.print_grid(grid)
-# path = dfs(graph, pacman_pos, goal_positions[0])
-# print(path)
-# for pos in path[1:]:
-# 	grid[pos] = '.'
-#
-# for row in grid.T:
-# 	print(''.join(row))
+	print("path cost is  : ", len(path)-1)
+	print("nodes expanded: ", nodes_expanded)
+	print()
+
+	grid, graph, pacman_position, goal_positions = utils.load_puzzle("part1/bigMaze.txt")
+	path, nodes_expanded = dfs(graph, pacman_position, goal_positions[0])
+
+	utils.draw_solution_to_grid(grid, path)
+	utils.print_grid(grid)
+	print("path cost is  : ", len(path)-1)
+	print("nodes expanded: ", nodes_expanded)
+	print()
+	
+	grid, graph, pacman_position, goal_positions = utils.load_puzzle("part1/openMaze.txt")
+	path, nodes_expanded = dfs(graph, pacman_position, goal_positions[0])
+
+	utils.draw_solution_to_grid(grid, path)
+	utils.print_grid(grid)
+	print("path cost is  : ", len(path)-1)
+	print("nodes expanded: ", nodes_expanded)
+	print()
