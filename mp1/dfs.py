@@ -1,67 +1,48 @@
 import numpy as np
 import utils
-import fileinput
+from collections import defaultdict
 
-grid = np.array([[c for c in line if (c != '\n' and c != '\r')] for line in fileinput.input()]).T
-
-width, height = grid.shape
-
-graph = {(x, y): [] for x in range(width) for y in range(height) if grid[x][y] != '%'}
-
-for (x, y) in graph:
-	if (x+1) < width and grid[x+1, y] != '%':
-		graph[(x, y)].append((x+1, y)) #right
-	if (x-1) >= 0 and grid[x-1, y] != '%':
-		graph[(x, y)].append((x-1, y)) #left
-	if (y+1) < height and grid[x, y+1] != '%':
-		graph[(x, y)].append((x, y+1)) #down
-	if (y-1) >= 0 and grid[x, y-1] != '%':
-		graph[(x, y)].append((x, y-1)) # up
-
-pacman_pos = np.where(grid == 'P')
-pacman_pos = (pacman_pos[0][0], pacman_pos[1][0])
-
-goal_positions = np.where(grid == '.')
-goal_positions = [(goal_positions[0][n], goal_positions[1][n]) for n in range(len(goal_positions[0]))]
-
-#print(goal_positions)
-#DFS(G, v):
-#    setLabel(v, VISITED)
-#    for Vertex w in G.adjacent(v):
-#        if getLabel(w) == UNEXPLORED:
-#            setLabel(v, w, DISCOVERY)
-#            DFS(G, w)
-#        else if getLabel(v, w) == UNEXPLORED:
-#            setLabel(v, w, BACK)
-# while loop with stack;
-
-# create labels, stack and
-def dfs(graph, pacman_pos, goal_positions):
-	explored = []
-	stack = [[pacman_pos]]
-
+def dfs(graph, pacman_pos, goal_position):
+	distance = {node:None for node in graph}
+	#distance dict
+	distance[pacman_pos] = 0
+    # predecessors dict
+	parent = defaultdict(lambda: None)
+	stack = [pacman_pos]
+	nodes_expanded = 0
+	#iterate through the stack and check each object in the graph
 	while stack:
-#	if pacman_pos == goal_positions[0]:
-#	break;
-		path = stack.pop(0)
-		node = path[-1]
-		if node not in explored:
-			neighbours = graph[node]
-			explored.append(node)
-			for neighbour in neighbours:
-				new_path = list(path)
-				new_path.append(neighbour)
-				stack.append(new_path)
-				if neighbour == goal_positions:
-					return new_path
-	return path
+			coordinate = stack.pop()
+			nodes_expanded += 1
+			if coordinate == goal_position:
+				break
+			for vertex in graph[coordinate]:
+				if distance[vertex] is None:
+						distance[vertex] = distance[coordinate] + 1
+						stack.append(vertex)
+						parent[vertex] = coordinate
 
-new_path = dfs(graph, pacman_pos, goal_positions[0])
-print(new_path)
-print(len(new_path))
+    # retrieve shortest path
+	path = []
+	n = goal_position
+	while n is not None:
+			path.insert(0,n)
+			n = parent[n]
+	print (path)
+	print(goal_position)
+	return path, nodes_expanded
 
-for pos in new_path[1:]:
-	grid[pos] = '.'
-
-for row in grid.T:
-	print(''.join(row))
+if __name__ == "__main__":
+	grid, graph, pacman_pos, goal_positions = utils.load_puzzle("part1/mediumMaze.txt")
+	path, nodes_expanded = dfs(graph, pacman_pos, goal_positions[0])
+	print(nodes_expanded)
+	print(len(path)-1)
+	utils.draw_solution_to_grid(grid, path)
+	utils.print_grid(grid)
+# path = dfs(graph, pacman_pos, goal_positions[0])
+# print(path)
+# for pos in path[1:]:
+# 	grid[pos] = '.'
+#
+# for row in grid.T:
+# 	print(''.join(row))
