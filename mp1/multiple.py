@@ -6,32 +6,30 @@ from collections import defaultdict
 
 class Node():
 	def __init__(self, position, collected):
-		self.pos = position
 		self.collected = collected
+		self.pos = position
 
 	def __gt__(self, other):
 		return True
 
 	def __str__(self):
-		return ("pos=" + str(self.pos) + "\ncollected=" + str(self.collected))
+		return ("pos = " + str() + "collected=" + str(self.collected))
 
-
-grid, simple_graph, pacman_position, goal_positions = utils.load_puzzle("part1/smallSearch.txt")
+# assume there is another goal underneath pacman's original position
+grid, simple_graph, pacman_position, goal_positions = utils.load_puzzle("part1/tinySearch.txt")
+goal_positions.append(pacman_position)
 num_goals = len(goal_positions)
-init_node = Node(pacman_position, [False for p in goal_positions])
-x_size, y_size = grid.shape
+init_node = Node(num_goals - 1, [False for p in goal_positions if goal_positions != pacman_position])
 
-goal_distances = np.zeros((num_goals, num_goals))
-for i in range(len(goal_positions) - 1):
-	for j in range(i+1, len(goal_positions)):
-		dist = len(astar.a_star(simple_graph, goal_positions[i], [goal_positions[j]]))
+goal_distances = np.zeros((num_goals, num_goals), dtype=int)
+for i in range(num_goals):
+	for j in range(i+1, num_goals):
+		dist = len(astar.a_star(simple_graph, goal_positions[i], goal_positions[j])[0]) - 1
 		goal_distances[i][j] = dist
 		goal_distances[j][i] = dist
+	goal_distances[i][i] = 1
+print(goal_distances)
 print("Done with preprocessing")
-
-
-def manhattan_dist(pos1, pos2):
-	return abs(pos1[0] - pos2[0]) + abs(pos1[1] - pos2[1])
 
 
 def mst_size(adj_matrix):
@@ -48,15 +46,12 @@ def mst_size(adj_matrix):
 
 		for r in range(num_nodes):
 			if r != vertex:
-				#edges.append((adj_matrix[vertex][r], vertex, r))
 				heapq.heappush(edges, (adj_matrix[vertex][r], vertex, r))
 
 		while not min_edge:
 			min_edge = heapq.heappop(edges)
 			if (min_edge[2] in visited):
 				min_edge = None
-		#min_edge = min(edges, key=lambda x: 10000 if x[2] in visited else x[0])
-		#edges.remove(min_edge)
 
 		MST.add(min_edge)
 		vertex = min_edge[2]
@@ -66,59 +61,29 @@ def mst_size(adj_matrix):
 
 
 def heuristic_cost_estimate(node):
-	#return max(node.collected.count(False), max([manhattan_dist(g, node.pos) for g in goal_positions]))
+	uncollected_indices = [i for i in range(num_goals) if not node.collected[i]]
+	uncollected_indices.append(node.pos)
+	graph = np.zeros((len(uncollected_indices), len(uncollected_indices)), dtype=int)
 
-	#return node.collected.count(False)
-
-	#all_nodes = [goal_positions[i] for i in range(len(goal_positions)) if not node.collected[i]]
-	#all_nodes.append(node.pos)
-
-	#if (len(all_nodes) == 1):
-	#	return 0
-	#return sum([min([taxi_dist_or_inf(n1, n2) for n2 in all_nodes]) for n1 in all_nodes]) / 2
-
-	#graph = np.array([[manhattan_dist(pos1, pos2) for pos2 in all_nodes] for pos1 in all_nodes])
-
-	uncollected_indices = [i for i in range(len(goal_positions)) if not node.collected[i]]
-	graph = np.zeros((len(uncollected_indices) + 1, len(uncollected_indices) + 1))
-
-	for i in range(len(uncollected_indices)):
+	for i in range(len(uncollected_indices) - 1):
 		for j in range(i+1, len(uncollected_indices)):
 			graph[i][j] = goal_distances[uncollected_indices[i]][uncollected_indices[j]]
 			graph[j][i] = goal_distances[uncollected_indices[i]][uncollected_indices[j]]
 
-		graph[i][len(uncollected_indices)] = manhattan_dist(node.pos, goal_positions[uncollected_indices[i]])
-		graph[len(uncollected_indices)][i] = manhattan_dist(node.pos, goal_positions[uncollected_indices[i]])
-		
 	return mst_size(graph)
 
 
 def get_neighbors(node):
-	x, y = node.pos
 	ret = []
-	# right
-	if (x+1) < x_size and grid[x+1][y] != '%':
-		n = Node((x+1, y), [True if goal_positions[i] == (x+1, y) else node.collected[i] for i in range(len(goal_positions))])
-		ret.append(n)
-	# left
-	if (x-1) >= 0 and grid[x-1][y] != '%':
-		n = Node((x-1, y), [True if goal_positions[i] == (x-1, y) else node.collected[i] for i in range(len(goal_positions))])
-		ret.append(n)	
-	# down
-	if (y+1) < y_size and grid[x][y+1] != '%':
-		n = Node((x, y+1), [True if goal_positions[i] == (x, y+1) else node.collected[i] for i in range(len(goal_positions))])
-		ret.append(n)
-	# up
-	if (y-1) >= 0 and grid[x][y-1] != '%':
-		n = Node((x, y-1), [True if goal_positions[i] == (x, y-1) else node.collected[i] for i in range(len(goal_positions))])
-		ret.append(n)
-
+	uncollected_indices = [i for i in range(num_goals) if not node.collected[i]]
+	for i in uncollected_indices:
+		new_collected = [True if i == node.pos else node.collected[i]  for i in range(num_goals)]
+		ret.append(Node(i, new_collected))
 	return ret
 
 
 def is_finished(node):
 	return node.collected.count(False) == 0
-
 
 def multiple_goal_a_star():
 	closed_set = set()
@@ -133,19 +98,11 @@ def multiple_goal_a_star():
 
 	g_score_dict[init_node] = 0
 
-	collected = 0
-
 	path = []
 
 	while(open_set_heap):
 		current = heapq.heappop(open_set_heap)[1]
 		open_set_set.remove(current)
-
-		curr_coll = current.collected.count(True)
-		if (curr_coll > collected):
-			print(curr_coll)
-			print(current.pos)
-			collected = curr_coll
 
 		if (is_finished(current)):
 			path.append(current.pos)
@@ -157,7 +114,7 @@ def multiple_goal_a_star():
 			if neighbor in closed_set:
 				continue
 
-			tentative_g_score = g_score_dict[current] + 1
+			tentative_g_score = g_score_dict[current] + goal_distances[neighbor.pos][current.pos]
 			if tentative_g_score < g_score_dict[neighbor]:
 				came_from[neighbor] = current
 				g_score_dict[neighbor] = tentative_g_score
@@ -175,11 +132,22 @@ def multiple_goal_a_star():
 	path.reverse()
 	return path
 
+def put_path_on_grid(path):
+	for i in range(1, len(path)):
+		pos = goal_positions[path[i]]
+		grid[pos[0]][pos[1]] = chr(i + 48) if i < 10 else chr(i + 87)
+
+def print_path(path):
+	print('Path: ' + str([goal_positions[i] for i in path]))
+
+def get_path_cost(path):
+	return sum([goal_distances[path[i]][path[i+1]] for i in range(len(path) - 1)])
 
 if __name__ == "__main__":
 	path = multiple_goal_a_star()
 
-	utils.draw_solution_to_grid(grid, path)
+	#print(grid)
+	put_path_on_grid(path)
 	utils.print_grid(grid)
-	print("Path: " + str(path))
-	print("Length of path: " + str(len(path)))
+	print_path(path)
+	print(get_path_cost(path))
