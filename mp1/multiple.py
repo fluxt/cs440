@@ -3,6 +3,7 @@ import utils
 import heapq
 import astar
 from collections import defaultdict
+import time
 
 # each node represents a different state: includes a list for goals collectd so far and an integer for the position pacman is at now
 class Node():
@@ -192,7 +193,7 @@ def put_path_on_grid(path, grid):
 
 if __name__ == "__main__":
 	for fileName in ["part1/tinySearch.txt", "part1/smallSearch.txt", "part1/mediumSearch.txt"]:
-
+		start = time.time()
 		grid, goal_positions, init_node, goal_distances = ititialize_tsp(fileName)
 
 		path, nodes_expanded = multiple_goal_a_star(goal_positions, init_node, goal_distances)
@@ -201,4 +202,6 @@ if __name__ == "__main__":
 		utils.print_grid(grid)
 		print("path cost is  : ", get_path_cost(path, goal_distances))
 		print("nodes expanded: ", nodes_expanded)
+		end = time.time()
+		print("total runtime : {0:.3f} seconds".format(end-start))
 		print()
