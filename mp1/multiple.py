@@ -16,7 +16,7 @@ class Node():
 		return True
 
 # start by making the graph of distances between each goal position
-def initialize_stuff(fileName):
+def ititialize_tsp(fileName):
 	grid, simple_graph, pacman_position, goal_positions = utils.load_puzzle(fileName)
 	# assume there is another goal underneath pacman's original position. This will not affect how the code runs, but it does make the starting configuration easier to handle
 	goal_positions.append(pacman_position)
@@ -193,7 +193,7 @@ def put_path_on_grid(path, grid):
 if __name__ == "__main__":
 	for fileName in ["part1/tinySearch.txt", "part1/smallSearch.txt", "part1/mediumSearch.txt"]:
 
-		grid, goal_positions, init_node, goal_distances = initialize_stuff(fileName)
+		grid, goal_positions, init_node, goal_distances = ititialize_tsp(fileName)
 
 		path, nodes_expanded = multiple_goal_a_star(goal_positions, init_node, goal_distances)
 
