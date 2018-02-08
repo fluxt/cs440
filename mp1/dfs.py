@@ -6,35 +6,35 @@ def dfs(graph, pacman_pos, goal_position):
 	# dictionary of nodes visited
 	distance = {node:None for node in graph}
 	distance[pacman_pos] = 0
-    # dictionary of node's parents
+	# dictionary of node's parents
 	parent = defaultdict(lambda: None)
 	# push start position into the stack (list)
 	stack = [pacman_pos]
 	nodes_expanded = 0
 	while stack:
-			# pop the last element from the stack
-			coordinate = stack.pop()
-			nodes_expanded += 1
-			# if the current coordinate is equivalent to the end position exit the while loop and return shortest path
-			if coordinate == goal_position:
-				break
-	     	# loop through all of the neighbors within the current coordinate in the graph
-			for vertex in graph[coordinate]:
-				if distance[vertex] is None:
-						distance[vertex] = distance[coordinate] + 1
-						# increase the distance of the vertex by the coordinate+1
-						stack.append(vertex)
-						# update the list of parent nodes in the dictionary
-						parent[vertex] = coordinate
+		# pop the last element from the stack
+		coordinate = stack.pop()
+		nodes_expanded += 1
+		# if the current coordinate is equivalent to the end position exit the while loop and return shortest path
+		if coordinate == goal_position:
+			break
+		# loop through all of the neighbors within the current coordinate in the graph
+		for vertex in graph[coordinate]:
+			if distance[vertex] is None:
+				distance[vertex] = distance[coordinate] + 1
+				# increase the distance of the vertex by the coordinate+1
+				stack.append(vertex)
+				# update the list of parent nodes in the dictionary
+				parent[vertex] = coordinate
 
 	path = []
 	n = goal_position
 	# loop through the grid from the goal position and update the shortest path
 	while n is not None:
-		    # insert the shortest path into the return path
-			path.insert(0,n)
-			# set the next node to the parent of the previous inserted node
-			n = parent[n]
+		# insert the shortest path into the return path
+		path.insert(0,n)
+		# set the next node to the parent of the previous inserted node
+		n = parent[n]
 	return path, nodes_expanded
 
 if __name__ == "__main__":

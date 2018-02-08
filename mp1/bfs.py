@@ -13,29 +13,29 @@ def bfs(graph, pacman_pos, goal_position):
 	queue = [pacman_pos]
 	nodes_expanded = 0
 	while queue:
-		 	# pop the first element from the queue
-			coordinate = queue.pop(0)
-			nodes_expanded += 1
-			# if the current coordinate is equivalent to the end position exit the while loop and return shortest path
-			if coordinate == goal_position:
-				break
-			# loop through all of the neighbors within the current coordinate in the graph
-			for vertex in graph[coordinate]:
-				if distance[vertex] is None:
-						distance[vertex] = distance[coordinate] + 1
-						# increase the distance of the vertex by the coordinate+1
-						queue.append(vertex)
-						# update the list of parent nodes in the dictionary
-						parent[vertex] = coordinate
+	 	# pop the first element from the queue
+		coordinate = queue.pop(0)
+		nodes_expanded += 1
+		# if the current coordinate is equivalent to the end position exit the while loop and return shortest path
+		if coordinate == goal_position:
+			break
+		# loop through all of the neighbors within the current coordinate in the graph
+		for vertex in graph[coordinate]:
+			if distance[vertex] is None:
+				distance[vertex] = distance[coordinate] + 1
+				# increase the distance of the vertex by the coordinate+1
+				queue.append(vertex)
+				# update the list of parent nodes in the dictionary
+				parent[vertex] = coordinate
 
 	path = []
 	n = goal_position
 	# loop through the grid from the goal position and update the shortest path
 	while n is not None:
-    		# insert the shortest path into the return path
-			path.insert(0,n)
-			# set the next node to the parent of the previous inserted node
-			n = parent[n]
+		# insert the shortest path into the return path
+		path.insert(0,n)
+		# set the next node to the parent of the previous inserted node
+		n = parent[n]
 	return path, nodes_expanded
 
 if __name__ == "__main__":
