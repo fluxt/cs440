@@ -39,6 +39,7 @@ def multiple_nearest_neighbor(goal_positions, goal_distances):
             if distance < minimum_distance:
                 destination = uncollected_index
                 minimum_distance = distance
+        # remove the closest node from uncollected, set source, and set path
         uncollected.remove(destination)
         source = destination
         path.append(destination)
@@ -57,15 +58,17 @@ def get_path_cost(path, goal_distances):
     return sum([goal_distances[path[i]][path[i+1]] for i in range(len(path) - 1)])
 
 if __name__ == "__main__":
-    for fileName in ["part1/tinySearch.txt", "part1/smallSearch.txt", "part1/mediumSearch.txt"]:
-         start = time.time()
-         grid, goal_positions, goal_distances = load_tsp(fileName)
-         path, nodes_expanded = multiple_nearest_neighbor(goal_positions, goal_distances)
+    for fileName in ["part1/tinySearch.txt", "part1/smallSearch.txt", "part1/mediumSearch.txt", "part1/bigDots.txt"]:
+        start = time.time()
+        grid, goal_positions, goal_distances = load_tsp(fileName)
+        path, nodes_expanded = multiple_nearest_neighbor(goal_positions, goal_distances)
 
-         put_path_on_grid(path, grid)
-         utils.print_grid(grid)
-         print("path cost is  : ", get_path_cost(path, goal_distances))
-         print("nodes expanded: ", nodes_expanded)
-         end = time.time()
-         print("total runtime : {0:.3f} seconds".format(end-start))
-         print()
+        # big dots cannot correctly represented
+        if fileName != "part1/bigDots.txt":
+            put_path_on_grid(path, grid)
+            utils.print_grid(grid)
+        print("path cost is  : ", get_path_cost(path, goal_distances))
+        print("nodes expanded: ", nodes_expanded)
+        end = time.time()
+        print("total runtime : {0:.3f} seconds".format(end-start))
+        print()
