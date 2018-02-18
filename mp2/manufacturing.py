@@ -38,7 +38,7 @@ def get_neighbors(node):
 	for next_loc in range(5):
 		new_prog = [0 for n in range(5)]
 		for widget_idx in range(5):
-			if next_loc == widget_orders[widget_idx][node.progress[widget_idx] + 1]:
+			if next_loc == widget_orders[widget_idx][node.progress[widget_idx]]:
 				new_prog[widget_idx] = node.progress[widget_idx] + 1
 			else:
 				new_prog[widget_idx] = node.progress[widget_idx]
@@ -76,11 +76,11 @@ def a_star(init_node):
 		current = heapq.heappop(open_set_heap)[1]
 		open_set_set.remove(current)
 
-		print(current)
+		#print(current)
 
 		# if current is done, then break
 		if (is_finished(current)):
-			path.append(current.pos)
+			path.append(current.location)
 			break
 
 		closed_set.add(current)
@@ -105,7 +105,7 @@ def a_star(init_node):
 	# recreate the path from the came_from map
 	while current in came_from:
 		current = came_from[current]
-		path.append(current.pos)
+		path.append(current.location)
 
 	path.reverse()
 	# return  the path and the number of nodes expanded
@@ -115,10 +115,9 @@ if __name__ == "__main__":
 	start = time.time()
 
 	init_node = Node((0, 0, 0, 0, 0), -1)
+
 	path, nodes_expanded = a_star(init_node)
 
-	put_path_on_grid(path, grid)
-	utils.print_grid(grid)
 	print("path cost is  : ", len(path))
 	print("path: ", str(path))
 	print("nodes expanded: ", nodes_expanded)
