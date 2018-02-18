@@ -22,6 +22,12 @@ class Node():
 		self.progress = progress
 		self.location = location
 
+	def __eq__(self, other):
+		return self.progress == other.progress and self.location == other.location
+
+	def __hash__(self):
+		return hash((self.progress, self.location))
+
 	def __str__(self):
 		return "Progress: " + str(self.progress) + ", Location: " + str(self.location)
 	
@@ -76,8 +82,6 @@ def a_star(init_node):
 		current = heapq.heappop(open_set_heap)[1]
 		open_set_set.remove(current)
 
-		#print(current)
-
 		# if current is done, then break
 		if (is_finished(current)):
 			path.append(current.location)
@@ -87,7 +91,6 @@ def a_star(init_node):
 
 		for neighbor in get_neighbors(current):
 			if neighbor in closed_set:
-				print(neighbor)
 				continue
 
 			# get the new g_score for this node
@@ -109,7 +112,7 @@ def a_star(init_node):
 
 	path.reverse()
 	# return  the path and the number of nodes expanded
-	return path, len(closed_set)
+	return path[1:], len(closed_set)
 
 if __name__ == "__main__":
 	start = time.time()
