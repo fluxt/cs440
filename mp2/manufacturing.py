@@ -114,15 +114,19 @@ def a_star(init_node):
 	# return  the path and the number of nodes expanded
 	return path[1:], len(closed_set)
 
+def path_to_sequence(path):
+	return ''.join(chr(e+ord('A')) for e in path)
+
 if __name__ == "__main__":
 	start = time.time()
 
 	init_node = Node((0, 0, 0, 0, 0), -1)
 
 	path, nodes_expanded = a_star(init_node)
+	sequence = path_to_sequence(path)
 
+	print("sequence: ", sequence)
 	print("path cost is  : ", len(path))
-	print("path: ", str(path))
 	print("nodes expanded: ", nodes_expanded)
 	end = time.time()
 	print("total runtime : {0:.3f} seconds".format(end-start))
