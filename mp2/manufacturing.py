@@ -7,11 +7,7 @@ distances =[[0, 1064, 673, 1401, 277],
 	[1401, 1934, 1001, 0, 387],
 	[277, 337, 399, 387, 0]]
 
-reduced_distances = [[0, 614, 673, 664, 277], 
-		[614, 0, 776, 764, 337],
-		[673, 776, 0, 786, 399],
-		[664, 764, 776, 0, 387],
-		[277, 337, 399, 387, 0]]
+minimum_step_distance = 277
 
 #A=0, B=1, C=2, D=3, E=4
 
@@ -35,32 +31,14 @@ class Node():
 
 	def __str__(self):
 		return "Progress: " + str(self.progress) + ", Location: " + str(self.location)
-	
-	def __gt__(self, other):
-		return True
-
-def get_min_path_cost(path):
-	cost = 0
-	for i in range(len(path) - 1):
-		cost += reduced_distances[path[i]][path[i+1]]
-	return cost
 
 # our heuristic function for A-Star
 def heuristic_cost_estimate_1(node):
 	return 5 - min(node.progress)
 
 def heuristic_cost_estimate_2(node):
-	#return 0
-
-	max_total = 0
-	for i in range(5):
-		widget_prog = node.progress[i]
-		path = [node.location]
-		path.extend(widget_orders[i][widget_prog:6])
-		total = get_min_path_cost(path)
-		if total > max_total:
-			max_total = total
-	return max_total
+	# working heuristic, but it's not very good
+	return (5 - min(node.progress)) * minimum_step_distance
 
 def distance_step_cost(node1, node2):
 	if node1.location == -1 or node2.location == -1:
