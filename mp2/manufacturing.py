@@ -50,7 +50,7 @@ def heuristic_cost_estimate_1(node):
 	return 5 - min(node.progress)
 
 def heuristic_cost_estimate_2(node):
-	return 0
+	#return 0
 
 	max_total = 0
 	for i in range(5):
