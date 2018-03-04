@@ -175,4 +175,4 @@ if __name__ == "__main__":
 	print("nodes expanded: ", nodes_expanded_2)
 	end_2 = time.time()
 	print("total runtime : {0:.3f} seconds".format(end_2-start_2))
-	print()
+
