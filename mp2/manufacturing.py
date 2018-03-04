@@ -1,4 +1,3 @@
-import heapq
 from collections import defaultdict
 import time
 
@@ -90,9 +89,7 @@ def a_star(init_node, heuristic, step_cost):
 	closed_set = set()
 
 	# open set (nodes we have seen, but not expanded)
-	# we store this as a paralell min-heap and set for better efficiency
-	open_set_heap = [(heuristic(init_node) ,init_node)]
-	open_set_set = {init_node}
+	open_set = {init_node}
 
 	# a dictionary that maps nodes to the node that they came from. used for reconstructing the path at the end
 	came_from = dict()
@@ -107,10 +104,10 @@ def a_star(init_node, heuristic, step_cost):
 
 	path = []
 
-	while(open_set_heap):
+	while(open_set):
 		# remove the node with the smallest f_score
-		current = heapq.heappop(open_set_heap)[1]
-		open_set_set.remove(current)
+		current = min(open_set, key= lambda x: f_score_dict[x])
+		open_set.remove(current)
 
 		# if current is done, then break
 		if (is_finished(current)):
@@ -124,15 +121,14 @@ def a_star(init_node, heuristic, step_cost):
 				continue
 
 			# get the new g_score for this node
-			tentative_g_score = g_score_dict[current] + step_cost(neighbor, current)
+			tentative_g_score = g_score_dict[current] + step_cost(current, neighbor)
 			if tentative_g_score < g_score_dict[neighbor]:
 				came_from[neighbor] = current
 				g_score_dict[neighbor] = tentative_g_score
 				f_score_dict[neighbor] = tentative_g_score + heuristic(neighbor)
 
-			if neighbor not in open_set_set:
-				open_set_set.add(neighbor)
-				heapq.heappush(open_set_heap, (f_score_dict[neighbor] ,neighbor))
+			if neighbor not in open_set:
+				open_set.add(neighbor)
 
 	# recreate the path from the came_from map
 	while current in came_from:
