@@ -18,6 +18,8 @@ widget_orders =[[0, 4, 3, 2, 0, -1],
 		[1, 4, 2, 1, 3, -1]]
 
 # each node represents a different state
+# nodes have a list of integers that represents the current progress in each widget
+# as well as an int representing the current location
 class Node():
 	def __init__(self, progress, location):
 		self.progress = progress
@@ -32,12 +34,12 @@ class Node():
 	def __str__(self):
 		return "Progress: " + str(self.progress) + ", Location: " + str(self.location)
 
-# our heuristic function for A-Star
+# our heuristic function for the minimum-step search
 def heuristic_cost_estimate_1(node):
 	return 5 - min(node.progress)
 
+# heuristic for the minimum-distance search
 def heuristic_cost_estimate_2(node):
-	# working heuristic, but it's not very good
 	return (5 - min(node.progress)) * minimum_step_distance
 
 def distance_step_cost(node1, node2):
