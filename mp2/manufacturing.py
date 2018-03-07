@@ -128,7 +128,7 @@ if __name__ == "__main__":
 
 	init_node_1 = Node((0, 0, 0, 0, 0), -1)
 
-	print("PART 1")
+	print("PART 1.1 (smallest number of steps)")
 	path_1, nodes_expanded_1 = a_star(init_node_1, heuristic_cost_estimate_1, lambda x,y: 1)
 
 	print("path cost is  : ", len(path_1))
@@ -141,7 +141,7 @@ if __name__ == "__main__":
 	start_2 = time.time()
 	init_node_2 = Node((0, 0, 0, 0, 0), -1)
 
-	print("PART 2")
+	print("PART 1.1 (smallest number of miles)")
 	path_2, nodes_expanded_2 = a_star(init_node_2, heuristic_cost_estimate_2, distance_step_cost)
 
 	print("path cost is  : ", get_path_cost(path_2))
@@ -149,4 +149,29 @@ if __name__ == "__main__":
 	print("nodes expanded: ", nodes_expanded_2)
 	end_2 = time.time()
 	print("total runtime : {0:.3f} seconds".format(end_2-start_2))
+	print()
 
+	start_3 = time.time()
+	init_node_3 = Node((0, 0, 0, 0, 0), -1)
+
+	print("PART 1.3.2 (smallest number of steps)")
+	path_3, nodes_expanded_3 = a_star(init_node_3, lambda x: 0, lambda x, y: 1)
+
+	print("path cost is  : ", len(path_3))
+	print("path: ", str(path_3))
+	print("nodes expanded: ", nodes_expanded_3)
+	end_3 = time.time()
+	print("total runtime : {0:.3f} seconds".format(end_3-start_3))
+	print()
+
+	start_4 = time.time()
+	init_node_4 = Node((0, 0, 0, 0, 0), -1)
+
+	print("PART 1.3.2 (smallest number of miles)")
+	path_4, nodes_expanded_4 = a_star(init_node_4, lambda x: 0, distance_step_cost)
+
+	print("path cost is  : ", get_path_cost(path_4))
+	print("path: ", str(path_4))
+	print("nodes expanded: ", nodes_expanded_4)
+	end_4 = time.time()
+	print("total runtime : {0:.3f} seconds".format(end_4-start_4))
