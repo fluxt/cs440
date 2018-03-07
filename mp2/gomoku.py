@@ -24,12 +24,54 @@ gomoku_board = np.array([[0]*7]*7)
 
 def get_game_status(game_board, player_num):
     player_num = game_board[player_num]
-    for x in range(7):
-        for y in range(3):
+    # check the vertical cases on the gameboard
+    for x in range(8):
+        for y in range(4):
+            vertcheck = 0
             for i in range(5):
-                if game_board[x][y+1] == player_num: 
-
-
+                if game_board[x][y+i] == player_num:
+                    vertcheck += 1
+            if vertcheck == 5:
+                return player_num
+    # check the horizontal cases on the gameboard
+    for x in range(4):
+        for y in range(8):
+            horizcheck = 0
+            for i in range(5):
+                if game_board[x+i][y] == player_num:
+                    horizcheck += 1
+            if horizcheck == 5:
+                return player_num
+    # check the forward diagonal cases on the gameboard
+    for x in range(4):
+        for y in range(4):
+            diag1, diag2, diag3, diag4 = 0
+            for i in range(5):
+                if game_board[x+i][y+i+3] == player_num:
+                    diag4 += 1
+                if game_board[x+i][y+i+2] == player_num:
+                    diag3 += 1
+                if game_board[x+i][y+i+1] == player_num:
+                    diag2 += 1
+                if game_board[x+i][y+i] == player_num:
+                    diag1 += 1
+            if diag1 == 5 or diag2 == 5 or diag3 == 5:
+                return player_num
+# check the backwards diagonal cases on the gameboard
+    for x in range(4):
+        for y in range(4):
+            diag1, diag2, diag3,diag4 = 0
+            for i in range(5):
+                if game_board[x+8-i][y+i+3] == player_num:
+                    diag4 += 1
+                if game_board[x+8-i][y+i+2] == player_num:
+                    diag3 += 1
+                if game_board[x+8-i][y+i+1] == player_num:
+                    diag2 += 1
+                if game_board[x+8-i][y+i] == player_num:
+                    diag1 += 1
+            if diag1 == 5 or diag2 == 5 or diag3 == 5:
+                return player_num
 
 
 def play_game(red, blue):
@@ -54,3 +96,4 @@ def play_game(red, blue):
 
 #print("\n current Board is:\n" + str(Node(gomoku_board, 2)))
 if __name__ == "__main__":
+    print("\n current Board is:\n" + str((gomoku_board, 2)))
