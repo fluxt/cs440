@@ -4,63 +4,75 @@ import numpy as np
 
 # initialize the board for the gomoko game
 gomoku_board = np.array([[0]*7]*7)
-# each node represents a different state print the board and the current turn
-# class BoardState():
-# 	def __init__(self, board, turn):
-# 		self.board = board
-# 		self.turn = turn
-#
-# 	def __eq__(self, other):
-# 		return self.board == other.board and self.turn == other.turn
-#
-# 	def __hash__(self):
-# 		return hash((self.board, self.turn))
-#
-# 	def __str__(self):
-# 		return "Board: \n" + str(self.board) + "\nTurn: " + str(self.turn)
-# red = 1
-# blue = 2
-# empty = 0
 
-def get_game_status(game_board, player_num):
-    player_num = game_board[player_num]
-    # check the vertical cases on the gameboard
-    for x in range(8):
-        for y in range(4):
-            vertcheck = 0
-            for i in range(5):
-                if game_board[x][y+i] == player_num:
-                    vertcheck += 1
-            if vertcheck == 5:
-                return player_num
-    # check the horizontal cases on the gameboard
-    for x in range(4):
-        for y in range(8):
-            horizcheck = 0
-            for i in range(5):
-                if game_board[x+i][y] == player_num:
-                    horizcheck += 1
-            if horizcheck == 5:
-                return player_num
-    # check the forward diagonal cases on the gameboard
-    for x in range(4):
-        for y in range(4):
-            diag = 0
-            for i in range(5):
-                if game_board[x+i][y+i] == player_num:
-                    diag += 1
-            if diag == 5:
-                return player_num
-    # check the backwards diagonal cases on the gameboard
-    for x in range(4,8):
-        for y in range(4):
-            diag = 0
-            for i in range(5):
-                if game_board[x-i][y+i] == player_num:
-                    diag += 1
-            if diag == 5:
-                return player_num
+# searches the board for a horizontal, vertical, or diagonal section that matches pattern
+# returns a tuple containing:
+#   the left-most, then top-most position of the found pattern
+# 	the position at the opposite end of the pattern
+def get_pattern_position(board, pattern):
+    size = len(pattern)
 
+    # check horizontal
+    for x in range(8 - size):
+        for y in range(7):
+            good = True
+            for i in range(size):
+                if board[x+i][y] != pattern[i]
+                    good = False
+            if good:
+                return ((x, y), (x+size-1, y))
+
+    # vertical
+    for x in range(7):
+        for y in range(8 - size):
+            good = True
+            for i in range(size):
+                if board[x][y+i] != pattern[i]
+                    good = False
+            if good:
+                return ((x, y), (x, y+size-1))
+
+    # top-left to bottom-right diagonal
+    for x in range(8 - size):
+        for y in range(8 - size):
+            good = True
+            for i in range(size):
+                if board[x+i][y+i] != pattern[i]
+                    good = False
+            if good:
+                return ((x, y), (x+size-1, y+size-1))
+
+    # top-right to bottom-left diagonal
+    for x in range(8 - size, 7):
+        for y in range(8 - size):
+            good = True
+            for i in range(size):
+                if board[x-i][y+i] != pattern[i]
+                    good = False
+            if good:
+                return ((x, y), (x-size+1 , y+size-1))
+
+    return 0
+
+# returns 0 if game is not finished
+# or 1/2 if that player has won
+# or 3 if it is a draw
+def get_game_status(game_board):
+	p1Win = get_pattern_position(game_board, [1]*5)
+	if p1Win:
+		return 1
+
+	p2Win = get_pattern_position(game_board, [2]*5)
+	if p2Win:
+		return 2
+
+	for x in range(7):
+		for y in range(7):
+			if not game_board[x][y]:
+				return 0
+
+	return 3
+	
 
 def play_game(red, blue):
     game_board = gomoku_board
@@ -69,7 +81,7 @@ def play_game(red, blue):
         # set player to red
         game_board[current_move] = 1
         # check for winner
-        game_status = get_game_status(game_board, 1)
+        game_status = get_game_status(game_board)
         if game_status != 0:
             return game_status
         #check blue move
@@ -77,7 +89,7 @@ def play_game(red, blue):
         # set player to blue
         game_board[current_move] = 2
         # check for winner
-        game_status = get_game_status(game_board, 2)
+        game_status = get_game_status(game_board)
         if game_status != 0:
             return game_status
 
