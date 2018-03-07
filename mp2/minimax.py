@@ -33,7 +33,7 @@ class Minimax:
 			return best_coord
 
 	def getMoveRecursive(self, game_board, depth, color):
-		if depth == 0 or self.check_win(game_board, 2 if color == 1 else 1):
+		if depth == 0 or gomoku.get_game_status(game_board, 2 if color == 1 else 1):
 			return self.heuristic(game_board, color)
 		empty_squares = [tuple(e) for e in np.argwhere(game_board==0)]
 		if color == 1: # maximizing
@@ -54,9 +54,6 @@ class Minimax:
 					best_value = value
 				game_board[coord] = 0
 			return best_value
-
-	def check_win(self, game_board, color):
-		return 0
 
 	def heuristic(self, game_board, color):
 		return 0
