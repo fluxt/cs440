@@ -17,7 +17,7 @@ def get_pattern_position(board, pattern):
         for y in range(7):
             good = True
             for i in range(size):
-                if board[x+i][y] != pattern[i]
+                if board[x+i][y] != pattern[i]:
                     good = False
             if good:
                 return ((x, y), (x+size-1, y))
@@ -27,7 +27,7 @@ def get_pattern_position(board, pattern):
         for y in range(8 - size):
             good = True
             for i in range(size):
-                if board[x][y+i] != pattern[i]
+                if board[x][y+i] != pattern[i]:
                     good = False
             if good:
                 return ((x, y), (x, y+size-1))
@@ -37,7 +37,7 @@ def get_pattern_position(board, pattern):
         for y in range(8 - size):
             good = True
             for i in range(size):
-                if board[x+i][y+i] != pattern[i]
+                if board[x+i][y+i] != pattern[i]:
                     good = False
             if good:
                 return ((x, y), (x+size-1, y+size-1))
@@ -47,7 +47,7 @@ def get_pattern_position(board, pattern):
         for y in range(8 - size):
             good = True
             for i in range(size):
-                if board[x-i][y+i] != pattern[i]
+                if board[x-i][y+i] != pattern[i]:
                     good = False
             if good:
                 return ((x, y), (x-size+1 , y+size-1))
