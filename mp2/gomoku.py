@@ -45,32 +45,20 @@ def get_game_status(game_board, player_num):
     # check the forward diagonal cases on the gameboard
     for x in range(4):
         for y in range(4):
-            diag1, diag2, diag3, diag4 = 0
+            diag = 0
             for i in range(5):
-                if game_board[x+i][y+i+3] == player_num:
-                    diag4 += 1
-                if game_board[x+i][y+i+2] == player_num:
-                    diag3 += 1
-                if game_board[x+i][y+i+1] == player_num:
-                    diag2 += 1
                 if game_board[x+i][y+i] == player_num:
-                    diag1 += 1
-            if diag1 == 5 or diag2 == 5 or diag3 == 5:
+                    diag += 1
+            if diag == 5:
                 return player_num
-# check the backwards diagonal cases on the gameboard
-    for x in range(4):
+    # check the backwards diagonal cases on the gameboard
+    for x in range(4,8):
         for y in range(4):
-            diag1, diag2, diag3,diag4 = 0
+            diag = 0
             for i in range(5):
-                if game_board[x+8-i][y+i+3] == player_num:
-                    diag4 += 1
-                if game_board[x+8-i][y+i+2] == player_num:
-                    diag3 += 1
-                if game_board[x+8-i][y+i+1] == player_num:
-                    diag2 += 1
-                if game_board[x+8-i][y+i] == player_num:
-                    diag1 += 1
-            if diag1 == 5 or diag2 == 5 or diag3 == 5:
+                if game_board[x-i][y+i] == player_num:
+                    diag += 1
+            if diag == 5:
                 return player_num
 
 
