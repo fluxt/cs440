@@ -2,7 +2,7 @@
 import numpy as np
 import gomoku
 
-class Minimax:
+class MiniMax:
 	def __init__(self, color, max_depth):
 		self.color = color
 		self.max_depth = max_depth-1
@@ -47,7 +47,6 @@ class Minimax:
 					best_value = value
 					best_coord = coord
 				game_board[coord] = 0
-		
 		return best_coord
 
 	def getMoveRecursive(self, game_board, depth, color):
@@ -70,10 +69,10 @@ class Minimax:
 		return best_value
 
 if __name__ == "__main__":
-	agent = Minimax(1, 3)
+	agent = MiniMax(1, 3)
 	gomoku_board = np.array([[0]*7]*7)
-	gomoku_board[0][3] = 1
-	gomoku_board[0][4] = 1
-	gomoku_board[0][5] = 1
+	gomoku_board[1][2] = 1
+	gomoku_board[2][3] = 1
+	gomoku_board[3][4] = 1
 	print(gomoku_board)
 	print(agent.getMove(gomoku_board))
