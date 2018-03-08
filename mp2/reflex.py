@@ -26,7 +26,7 @@ def get_move(board, player_num):
 	if winning_position:
 		return winning_position
 
-	blocking_position_1 = get_four_and_blank_position(board, player_num)
+	blocking_position_1 = get_four_and_blank_position(board, other_player_num)
 	if blocking_position_1:
 		return blocking_position_1
 
@@ -95,7 +95,7 @@ def get_move(board, player_num):
 				highest_mine_count = mine_count
 
 	# top-right to bottom-left diagonal
-	for x in range(3, 7):
+	for x in range(4, 7):
 		for y in range(3):
 			good = True
 			valid_positions = []
@@ -113,7 +113,7 @@ def get_move(board, player_num):
 				best_positions = valid_positions
 				highest_mine_count = mine_count
 
-	print(best_positions)
+	#print(best_positions)
 
 	left_most_val = 9
 	left_most_list = []
@@ -122,5 +122,8 @@ def get_move(board, player_num):
 			left_most_list.append(pos)
 		elif pos[0] < left_most_val:
 			left_most_list = [pos]
-	
+			left_most_val = pos[0]
+
+	#print(left_most_list)
+
 	return min(left_most_list, key= lambda x: x[1])
