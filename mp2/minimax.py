@@ -69,10 +69,6 @@ class MiniMax:
 		return best_value
 
 if __name__ == "__main__":
-	agent = MiniMax(1, 3)
-	gomoku_board = np.array([[0]*7]*7)
-	gomoku_board[1][2] = 1
-	gomoku_board[2][3] = 1
-	gomoku_board[3][4] = 1
-	print(gomoku_board)
-	print(agent.getMove(gomoku_board))
+	agent_red = MiniMax(1, 3)
+	agent_blu = MiniMax(2, 3)
+	gomoku.play_game(agent_blu, agent_red)
