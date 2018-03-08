@@ -33,14 +33,14 @@ def get_move(board, player_num):
 	if three_block:
 		return three_block[0]
 
-	best_position = False
+	best_positions = []
 	highest_mine_count = 0
 
 	# check horizontal
 	for x in range(3):
 		for y in range(7):
 			good = True
-			valid_position = False
+			valid_positions = []
 			mine_count = 0
 			for i in range(size):
 				if board[x+i][y] == other_player_num:
@@ -48,16 +48,18 @@ def get_move(board, player_num):
 				elif board[x+i][y] == player_num:
 					mine_count += 1
 				else:
-					valid_position = (x+i, y)
-			if good and valid_position and mine_count > highest_mine_count:
-				best_position = valid_position
+					valid_positions.append((x+i, y))
+			if good and mine_count == highest_mine_count:
+				best_positions.extend(valid_positions)
+			elif good and mine_count > highest_mine_count and len(valid_positions) > 0:
+				best_positions = valid_positions
 				highest_mine_count = mine_count
 
 	# vertical
 	for x in range(7):
 		for y in range(3):
 			good = True
-			valid_position = False
+			valid_positions = []
 			mine_count = 0
 			for i in range(size):
 				if board[x][y+i] == other_player_num:
@@ -65,17 +67,18 @@ def get_move(board, player_num):
 				elif board[x][y+i] == player_num:
 					mine_count += 1
 				else:
-					valid_position = (x, y+i)
-			if good and valid_position and mine_count > highest_mine_count:
-				best_position = valid_position
+					valid_positions.append((x, y+i))
+			if good and mine_count == highest_mine_count:
+				best_positions.extend(valid_positions)
+			elif good and mine_count > highest_mine_count and len(valid_positions) > 0:
+				best_positions = valid_positions
 				highest_mine_count = mine_count
-
 
 	# top-left to bottom-right diagonal
 	for x in range(3):
 		for y in range(3):
 			good = True
-			valid_position = False
+			valid_positions = []
 			mine_count = 0
 			for i in range(size):
 				if board[x+i][y+i] == other_player_num:
@@ -83,17 +86,18 @@ def get_move(board, player_num):
 				elif board[x+i][y+i] == player_num:
 					mine_count += 1
 				else:
-					valid_position = (x+i, y+i)
-			if good and valid_position and mine_count > highest_mine_count:
-				best_position = valid_position
+					valid_positions.append((x+i, y+i))
+			if good and mine_count == highest_mine_count:
+				best_positions.extend(valid_positions)
+			elif good and mine_count > highest_mine_count and len(valid_positions) > 0:
+				best_positions = valid_positions
 				highest_mine_count = mine_count
-
 
 	# top-right to bottom-left diagonal
 	for x in range(3, 7):
 		for y in range(3):
 			good = True
-			valid_position = False
+			valid_positions = []
 			mine_count = 0
 			for i in range(size):
 				if board[x-i][y+i] == other_player_num:
@@ -101,10 +105,19 @@ def get_move(board, player_num):
 				elif board[x-i][y+i] == player_num:
 					mine_count += 1
 				else:
-					valid_position = (x-i, y+i)
-			if good and valid_position and mine_count > highest_mine_count:
-				best_position = valid_position
+					valid_position.append((x-i, y+i))
+			if good and mine_count == highest_mine_count:
+				best_positions.extend(valid_positions)
+			elif good and mine_count > highest_mine_count and len(valid_positions) > 0:
+				best_positions = valid_positions
 				highest_mine_count = mine_count
 
-	if best_position:
-		return best_position
+	left_most_val = 9
+	left_most_list = []
+	for pos in best_positions:
+		if pos[0] == left_most_val:
+			left_most_list.append(pos)
+		elif pos[0] < left_most_val:
+			left_most_list = [pos]
+	
+	return min(left_most_list, key= lambda x: x[2])
