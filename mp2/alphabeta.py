@@ -53,7 +53,6 @@ class AlphaBeta:
 					best_coord = coord
 				b = min(b, best_value)
 				game_board[coord] = 0
-		
 		return best_coord
 
 	def getMoveRecursive(self, game_board, depth, a, b, color):
@@ -82,8 +81,8 @@ class AlphaBeta:
 if __name__ == "__main__":
 	agent = AlphaBeta(1, 3)
 	gomoku_board = np.array([[0]*7]*7)
-	gomoku_board[0][2] = 2
-	gomoku_board[0][3] = 2
-	gomoku_board[0][4] = 2
+	gomoku_board[1][2] = 1
+	gomoku_board[2][3] = 1
+	gomoku_board[3][4] = 1
 	print(gomoku_board)
 	print(agent.getMove(gomoku_board))
