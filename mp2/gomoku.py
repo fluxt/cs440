@@ -1,6 +1,9 @@
 from collections import defaultdict
 import time
 import numpy as np
+import minimax
+import reflex
+import userplay
 
 # initialize the board for the gomoko game
 gomoku_board = np.array([[0]*7]*7)
@@ -72,7 +75,7 @@ def get_game_status(game_board):
 				return 0
 
 	return 3
-	
+
 
 def play_game(red, blue):
     game_board = gomoku_board
@@ -80,6 +83,8 @@ def play_game(red, blue):
         current_move = red.getMove(game_board)
         # set player to red
         game_board[current_move] = 1
+        print("Red's Move")
+        userplay.print_user_board(game_board)
         # check for winner
         game_status = get_game_status(game_board)
         if game_status != 0:
@@ -88,6 +93,8 @@ def play_game(red, blue):
         current_move = blue.getMove(game_board)
         # set player to blue
         game_board[current_move] = 2
+        print("Blue's Move")
+        userplay.print_user_board(game_board)
         # check for winner
         game_status = get_game_status(game_board)
         if game_status != 0:
@@ -96,4 +103,7 @@ def play_game(red, blue):
 
 #print("\n current Board is:\n" + str(Node(gomoku_board, 2)))
 if __name__ == "__main__":
-    print("\n current Board is:\n" + str((gomoku_board, 2)))
+    #print("\n current Board is:\n" + str((gomoku_board, 2)))
+    red = minimax.MiniMax(1, 3)
+    blue = userplay.UserInterface(2)
+    play_game(red, blue)
