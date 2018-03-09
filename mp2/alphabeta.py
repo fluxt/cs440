@@ -16,16 +16,25 @@ class AlphaBeta:
 		return gomoku.get_game_status(game_board)
 
 	def heuristic(self, game_board):
-		result = gomoku.get_game_status(game_board)
-		if result == 1:
+		ret = 0.0
+		end_result = gomoku.get_game_status(game_board)
+		if end_result == 3:
+			return 0
+		elif end_result == 1:
 			return 10000
-		elif result == 2:
+		elif end_result == 2:
 			return -10000
-		return 0
+		for i in range(7):
+			for j in range(7):
+				if game_board[i][j] == 1:
+					ret += 3-max(abs(i-3), abs(j-3))
+				if game_board[i][j] == 2:
+					ret -= 3-max(abs(i-3), abs(j-3))
+		return ret
 
 	def getMove(self, game_board_original):
 		# make a copy
-		game_board = game_board_original[:]
+		game_board = game_board_original.copy()
 		# if not np.any(game_board):
 		# 	return (3, 3)
 		
@@ -53,6 +62,7 @@ class AlphaBeta:
 					best_coord = coord
 				b = min(b, best_value)
 				game_board[coord] = 0
+		print(best_value)
 		return best_coord
 
 	def getMoveRecursive(self, game_board, depth, a, b, color):
