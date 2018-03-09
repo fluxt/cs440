@@ -31,7 +31,7 @@ class AlphaBeta:
 				if game_board[i][j] == 2:
 					ret -= 3-max(abs(i-3), abs(j-3))
 		
-		
+
 
 		return ret
 
@@ -65,7 +65,6 @@ class AlphaBeta:
 					best_coord = coord
 				b = min(b, best_value)
 				game_board[coord] = 0
-		print(best_value)
 		return best_coord
 
 	def getMoveRecursive(self, game_board, depth, a, b, color):
