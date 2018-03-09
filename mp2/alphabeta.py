@@ -30,6 +30,9 @@ class AlphaBeta:
 					ret += 3-max(abs(i-3), abs(j-3))
 				if game_board[i][j] == 2:
 					ret -= 3-max(abs(i-3), abs(j-3))
+		
+		
+
 		return ret
 
 	def getMove(self, game_board_original):

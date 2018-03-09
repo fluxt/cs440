@@ -34,8 +34,8 @@ class MiniMax:
 	def getMove(self, game_board_original):
 		# make a copy
 		game_board = game_board_original.copy()
-		if not np.any(game_board):
-			return (3, 3)
+		# if not np.any(game_board):
+		# 	return (3, 3)
 
 		empty_squares = [tuple(e) for e in np.argwhere(game_board==0)]
 		if self.color == 1: # maximizing
