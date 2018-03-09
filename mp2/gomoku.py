@@ -1,8 +1,8 @@
 from collections import defaultdict
 import time
 import numpy as np
-import minimax
 import reflex
+import minimax
 import userplay
 import alphabeta
 
@@ -50,7 +50,7 @@ def get_pattern_position(board, pattern):
                 return ((x, y), (x+size-1, y+size-1))
 
     # top-right to bottom-left diagonal
-    for x in range(8 - size, 7):
+    for x in range(size-1, 7):
         for y in range(8 - size):
             good = True
             for i in range(size):
@@ -103,7 +103,7 @@ def play_game(red, blue):
 
         #check blue move
         current_move = blue.getMove(game_board)
-        # set player to blue
+		# set player to blue
         game_board[current_move] = 2
         alphabet_board[current_move] = chr(ord('A')+ move_number)
         print("Blue's Move " + str(move_number))
@@ -121,6 +121,16 @@ def play_game(red, blue):
 #print("\n current Board is:\n" + str(Node(gomoku_board, 2)))
 if __name__ == "__main__":
     #print("\n current Board is:\n" + str((gomoku_board, 2)))
-    red = alphabeta.AlphaBeta(1,3)
-    blue = alphabeta.AlphaBeta(2,3)
-    play_game(red, blue)
+	agent_red = userplay.UserInterface(1)
+	agent_blu = alphabeta.AlphaBeta(2, 3)
+	play_game(agent_red, agent_blu)
+
+    # board = np.array([[1, 2, 1, 1, 2, 2, 1],
+    #                   [2, 2, 1, 2, 1, 1, 1],
+    #                   [2, 1, 2, 1, 2, 2, 1],
+    #                   [1, 1, 1, 1, 2, 2, 2],
+    #                   [0, 2, 1, 2, 2, 2, 0],
+    #                   [0, 2, 1, 2, 1, 1, 0],
+    #                   [0, 0, 0, 0, 1, 0, 0]])
+
+    # print(get_game_status(board))

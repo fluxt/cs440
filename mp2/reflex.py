@@ -1,4 +1,5 @@
 import gomoku
+import numpy as np
 
 class ReflexAgent:
 	def __init__(self, player_num):
@@ -30,7 +31,7 @@ def get_move(board, player_num):
 	if blocking_position_1:
 		return blocking_position_1
 
-	three_block = gomoku.get_pattern_position(board, [0,  player_num, player_num, player_num, 0])
+	three_block = gomoku.get_pattern_position(board, [0,  other_player_num, other_player_num, other_player_num, 0])
 	if three_block:
 		return three_block[0]
 
@@ -126,4 +127,8 @@ def get_move(board, player_num):
 
 	#print(left_most_list)
 
-	return min(left_most_list, key= lambda x: x[1])
+	if (len(left_most_list) > 0):
+			return min(left_most_list, key= lambda x: x[1])
+
+	empty = [tuple(e) for e in np.argwhere(board==0)]
+	return empty[0]
