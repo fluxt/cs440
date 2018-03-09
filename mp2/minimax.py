@@ -1,4 +1,3 @@
-
 import numpy as np
 import gomoku
 
@@ -15,7 +14,7 @@ class MiniMax:
 		return gomoku.get_game_status(game_board)
 
 	def heuristic(self, game_board):
-		ret = 0.0
+		ret = 0
 		end_result = gomoku.get_game_status(game_board)
 		if end_result == 3:
 			return 0
@@ -23,12 +22,26 @@ class MiniMax:
 			return 10000
 		elif end_result == 2:
 			return -10000
+		
 		for i in range(7):
 			for j in range(7):
 				if game_board[i][j] == 1:
 					ret += 3-max(abs(i-3), abs(j-3))
 				elif game_board[i][j] == 2:
 					ret -= 3-max(abs(i-3), abs(j-3))
+		
+		if gomoku.get_pattern_position(game_board, [0, 1, 1, 1, 1, 0]):
+			ret += 500
+
+		if gomoku.get_pattern_position(game_board, [0, 2, 2, 2, 2, 0]):
+			ret -= 500
+
+		if gomoku.get_pattern_position(game_board, [0, 1, 1, 1, 0]):
+			ret += 100
+
+		if gomoku.get_pattern_position(game_board, [0, 2, 2, 2, 0]):
+			ret -= 100
+
 		return ret
 
 	def getMove(self, game_board_original):
