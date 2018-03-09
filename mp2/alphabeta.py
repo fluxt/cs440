@@ -30,17 +30,17 @@ class AlphaBeta:
 					ret += 3-max(abs(i-3), abs(j-3))
 				elif game_board[i][j] == 2:
 					ret -= 3-max(abs(i-3), abs(j-3))
-		
-		if gomoku.get_pattern_position(game_board, [0, 1, 1, 1, 1, 0]):
+
+		if gomoku.has_pattern_position(game_board, [0, 1, 1, 1, 1, 0]):
 			ret += 500
 
-		if gomoku.get_pattern_position(game_board, [0, 2, 2, 2, 2, 0]):
+		if gomoku.has_pattern_position(game_board, [0, 2, 2, 2, 2, 0]):
 			ret -= 500
 
-		if gomoku.get_pattern_position(game_board, [0, 1, 1, 1, 0]):
+		if gomoku.has_pattern_position(game_board, [0, 1, 1, 1, 0]):
 			ret += 100
 
-		if gomoku.get_pattern_position(game_board, [0, 2, 2, 2, 0]):
+		if gomoku.has_pattern_position(game_board, [0, 2, 2, 2, 0]):
 			ret -= 100
 
 		return ret
@@ -50,10 +50,10 @@ class AlphaBeta:
 		game_board = game_board_original.copy()
 		# if not np.any(game_board):
 		# 	return (3, 3)
-		
+
 		a = float("-inf")
 		b = float("inf")
-		
+
 		empty_squares = [tuple(e) for e in np.argwhere(game_board==0)]
 		if self.color == 1: # maximizing
 			best_value = float("-inf")

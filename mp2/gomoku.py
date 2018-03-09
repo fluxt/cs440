@@ -12,11 +12,7 @@ def get_initial_board():
 def get_init_alpha_board():
     return np.array([['.']*7]*7)
 
-# searches the board for a horizontal, vertical, or diagonal section that matches pattern
-# returns a tuple containing:
-#   the left-most, then top-most position of the found pattern
-# 	the position at the opposite end of the pattern
-def get_pattern_position(board, pattern):
+def has_pattern_position(board, pattern):
     size = len(pattern)
 
     # check horizontal
@@ -27,7 +23,7 @@ def get_pattern_position(board, pattern):
                 if board[x+i][y] != pattern[i]:
                     good = False
             if good:
-                return ((x, y), (x+size-1, y))
+                return True
 
     # vertical
     for x in range(7):
@@ -37,7 +33,7 @@ def get_pattern_position(board, pattern):
                 if board[x][y+i] != pattern[i]:
                     good = False
             if good:
-                return ((x, y), (x, y+size-1))
+                return True
 
     # top-left to bottom-right diagonal
     for x in range(8 - size):
@@ -47,7 +43,7 @@ def get_pattern_position(board, pattern):
                 if board[x+i][y+i] != pattern[i]:
                     good = False
             if good:
-                return ((x, y), (x+size-1, y+size-1))
+                return True
 
     # top-right to bottom-left diagonal
     for x in range(size-1, 7):
@@ -57,7 +53,7 @@ def get_pattern_position(board, pattern):
                 if board[x-i][y+i] != pattern[i]:
                     good = False
             if good:
-                return ((x, y), (x-size+1 , y+size-1))
+                return True
 
     return 0
 
@@ -65,11 +61,11 @@ def get_pattern_position(board, pattern):
 # or 1/2 if that player has won
 # or 3 if it is a draw
 def get_game_status(game_board):
-	p1Win = get_pattern_position(game_board, [1]*5)
+	p1Win = has_pattern_position(game_board, [1]*5)
 	if p1Win:
 		return 1
 
-	p2Win = get_pattern_position(game_board, [2]*5)
+	p2Win = has_pattern_position(game_board, [2]*5)
 	if p2Win:
 		return 2
 
@@ -82,7 +78,7 @@ def get_game_status(game_board):
 
 def print_char_board(board):
     print("BOARD:")
-    for row in board:
+    for row in reversed(board.T):
         print("".join(row))
 
 def play_game(red, blue, game_board=get_initial_board(), alphabet_board=get_init_alpha_board(), move_number=0):
