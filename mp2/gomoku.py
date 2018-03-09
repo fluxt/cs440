@@ -6,10 +6,6 @@ import minimax
 import userplay
 import alphabeta
 
-# initialize the board for the gomoko game
-gomoku_board = np.array([[0]*7]*7)
-#initialize alphabet array
-init_alpha_board = np.array([['.']*7]*7)
 
 # searches the board for a horizontal, vertical, or diagonal section that matches pattern
 # returns a tuple containing:
@@ -85,6 +81,11 @@ def print_char_board(board):
         print("".join(row))
 
 def play_game(red, blue):
+    # initialize the board for the gomoko game
+    gomoku_board = np.array([[0]*7]*7)
+    #initialize alphabet array
+    init_alpha_board = np.array([['.']*7]*7)
+
     game_board = gomoku_board
     alphabet_board = init_alpha_board
     move_number = 0
@@ -99,7 +100,9 @@ def play_game(red, blue):
         # check for winner
         game_status = get_game_status(game_board)
         if game_status == 1:
-            print("RED WINS OHHH YEAHHHH!!")
+            print("RED WINS!!")
+        if game_status == 3:
+            print("ITS A TIE")
         if game_status != 0:
             print_char_board(alphabet_board)
             return game_status
@@ -115,7 +118,9 @@ def play_game(red, blue):
         # check for winner
         game_status = get_game_status(game_board)
         if game_status == 2:
-            print("BLUE WINS AWWW YISSSS!!")
+            print("BLUE WINS!!")
+        if game_status == 3:
+            print("ITS A TIE")
         if game_status != 0:
             print_char_board(alphabet_board)
             return game_status
@@ -125,17 +130,45 @@ def play_game(red, blue):
 #print("\n current Board is:\n" + str(Node(gomoku_board, 2)))
 if __name__ == "__main__":
     #print("\n current Board is:\n" + str((gomoku_board, 2)))
-	agent_red = reflex.ReflexAgent(1)
-	#agent_blu = reflex.ReflexAgent(2)
-	agent_blu = userplay.UserInterface(2)
-	play_game(agent_red, agent_blu)
+    alpha_beta_red = alphabeta.AlphaBeta(1,3)
+    alpha_beta_blue = alphabeta.AlphaBeta(2,3)
+    minimax_red = minimax.MiniMax(1,3)
+    minimax_blue = minimax.MiniMax(2,3)
+    reflex_red = reflex.ReflexAgent(1)
+    reflex_blue = reflex.ReflexAgent(2)
 
-    # board = np.array([[1, 2, 1, 1, 2, 2, 1],
-    #                   [2, 2, 1, 2, 1, 1, 1],
-    #                   [2, 1, 2, 1, 2, 2, 1],
-    #                   [1, 1, 1, 1, 2, 2, 2],
-    #                   [0, 2, 1, 2, 2, 2, 0],
-    #                   [0, 2, 1, 2, 1, 1, 0],
-    #                   [0, 0, 0, 0, 1, 0, 0]])
+    print ("Alpha-Beta vs MiniMax")
+    start_1 = time.time()
+    play_game(alpha_beta_red, minimax_blue)
+    end_1 = time.time()
+    print("total runtime : {0:.3f} seconds".format(end_1-start_1))
 
-    # print(get_game_status(board))
+    print ("MiniMax vs Alpha-Beta")
+    start_2 = time.time()
+    play_game(minimax_red, alpha_beta_blue)
+    end_2 = time.time()
+    print("total runtime : {0:.3f} seconds".format(end_2-start_2))
+
+    print("Alpha-Beta vs Reflex")
+    start_3 = time.time()
+    play_game(alpha_beta_red, reflex_blue)
+    end_3 = time.time()
+    print("total runtime : {0:.3f} seconds".format(end_3-start_3))
+
+    print("Reflex vs Alpha-Beta")
+    start_4 = time.time()
+    play_game(reflex_red, alpha_beta_blue)
+    end_4 = time.time()
+    print("total runtime : {0:.3f} seconds".format(end_4-start_4))
+
+    print("Reflex vs MiniMax")
+    start_5 = time.time()
+    play_game(reflex_red, minimax_blue)
+    end_5 = time.time()
+    print("total runtime : {0:.3f} seconds".format(end_5-start_5))
+
+    print("MiniMax vs Reflex")
+    start_6 = time.time()
+    play_game(minimax_red, reflex_blue)
+    end_6 = time.time()
+    print("total runtime : {0:.3f} seconds".format(end_6-start_6))
