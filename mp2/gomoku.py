@@ -1,4 +1,3 @@
-from collections import defaultdict
 import time
 import numpy as np
 import reflex
@@ -6,6 +5,12 @@ import minimax
 import userplay
 import alphabeta
 
+
+def get_initial_board():
+	return np.array([[0]*7]*7)
+
+def get_init_alpha_board():
+    return np.array([['.']*7]*7)
 
 # searches the board for a horizontal, vertical, or diagonal section that matches pattern
 # returns a tuple containing:
@@ -80,15 +85,7 @@ def print_char_board(board):
     for row in board:
         print("".join(row))
 
-def play_game(red, blue):
-    # initialize the board for the gomoko game
-    gomoku_board = np.array([[0]*7]*7)
-    #initialize alphabet array
-    init_alpha_board = np.array([['.']*7]*7)
-
-    game_board = gomoku_board
-    alphabet_board = init_alpha_board
-    move_number = 0
+def play_game(red, blue, game_board=get_initial_board(), alphabet_board=get_init_alpha_board(), move_number=0):
     while True:
         #check red move
         current_move = red.getMove(game_board)

@@ -132,3 +132,15 @@ def get_move(board, player_num):
 
 	empty = [tuple(e) for e in np.argwhere(board==0)]
 	return empty[0]
+
+if __name__ == "__main__":
+	board = gomoku.get_initial_board()
+	char_board = gomoku.get_init_alpha_board()
+	board[1][1] = 1
+	char_board[1][1] = 'a'
+	board[5][5] = 2
+	char_board[5][5] = 'A'
+	reflex_red = ReflexAgent(1)
+	reflex_blue = ReflexAgent(2)
+
+	gomoku.play_game(reflex_red, reflex_blue, game_board=board, alphabet_board=char_board, move_number=1)
