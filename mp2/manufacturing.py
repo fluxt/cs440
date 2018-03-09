@@ -125,6 +125,10 @@ def get_path_cost(path):
 		cost += distances[path[i]][path[i+1]]
 	return cost
 
+def print_path(path):
+	pathStr = "".join([chr(ord('A')+n) for n in path])
+	print("Path: " + pathStr)
+
 if __name__ == "__main__":
 	start_1 = time.time()
 
@@ -134,7 +138,7 @@ if __name__ == "__main__":
 	path_1, nodes_expanded_1 = a_star(init_node_1, heuristic_cost_estimate_1, lambda x,y: 1)
 
 	print("path cost is  : ", len(path_1))
-	print("path: ", str(path_1))
+	print_path(path_1)
 	print("nodes expanded: ", nodes_expanded_1)
 	end_1 = time.time()
 	print("total runtime : {0:.3f} seconds".format(end_1-start_1))
@@ -147,7 +151,7 @@ if __name__ == "__main__":
 	path_2, nodes_expanded_2 = a_star(init_node_2, heuristic_cost_estimate_2, distance_step_cost)
 
 	print("path cost is  : ", get_path_cost(path_2))
-	print("path: ", str(path_2))
+	print_path(path_2)
 	print("nodes expanded: ", nodes_expanded_2)
 	end_2 = time.time()
 	print("total runtime : {0:.3f} seconds".format(end_2-start_2))
@@ -160,7 +164,7 @@ if __name__ == "__main__":
 	path_3, nodes_expanded_3 = a_star(init_node_3, lambda x: 0, lambda x, y: 1)
 
 	print("path cost is  : ", len(path_3))
-	print("path: ", str(path_3))
+	print_path(path_3)
 	print("nodes expanded: ", nodes_expanded_3)
 	end_3 = time.time()
 	print("total runtime : {0:.3f} seconds".format(end_3-start_3))
@@ -173,7 +177,7 @@ if __name__ == "__main__":
 	path_4, nodes_expanded_4 = a_star(init_node_4, lambda x: 0, distance_step_cost)
 
 	print("path cost is  : ", get_path_cost(path_4))
-	print("path: ", str(path_4))
+	print_path(path_4)
 	print("nodes expanded: ", nodes_expanded_4)
 	end_4 = time.time()
 	print("total runtime : {0:.3f} seconds".format(end_4-start_4))
