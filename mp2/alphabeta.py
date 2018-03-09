@@ -31,7 +31,17 @@ class AlphaBeta:
 				elif game_board[i][j] == 2:
 					ret -= 3-max(abs(i-3), abs(j-3))
 		
+		# if gomoku.get_pattern_position(game_board, [0, 1, 1, 1, 1, 0]):
+		# 	ret += 500
 
+		# if gomoku.get_pattern_position(game_board, [0, 2, 2, 2, 2, 0]):
+		# 	ret -= 500
+
+		# if gomoku.get_pattern_position(game_board, [0, 1, 1, 1, 0]):
+		# 	ret += 100
+
+		# if gomoku.get_pattern_position(game_board, [0, 2, 2, 2, 0]):
+		# 	ret -= 100
 
 		return ret
 
