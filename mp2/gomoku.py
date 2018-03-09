@@ -4,6 +4,7 @@ import numpy as np
 import minimax
 import reflex
 import userplay
+import alphabeta
 
 # initialize the board for the gomoko game
 gomoku_board = np.array([[0]*7]*7)
@@ -80,6 +81,7 @@ def get_game_status(game_board):
 def play_game(red, blue):
     game_board = gomoku_board
     while True:
+        #check red move
         current_move = red.getMove(game_board)
         # set player to red
         game_board[current_move] = 1
@@ -87,8 +89,11 @@ def play_game(red, blue):
         userplay.print_user_board(game_board)
         # check for winner
         game_status = get_game_status(game_board)
+        if game_status == 1:
+            print("RED WINS OHHH YEAHHHH!!")
         if game_status != 0:
             return game_status
+
         #check blue move
         current_move = blue.getMove(game_board)
         # set player to blue
@@ -97,6 +102,8 @@ def play_game(red, blue):
         userplay.print_user_board(game_board)
         # check for winner
         game_status = get_game_status(game_board)
+        if game_status == 2:
+            print("BLUE WINS AWWW YISSSS!!")
         if game_status != 0:
             return game_status
 
@@ -104,6 +111,6 @@ def play_game(red, blue):
 #print("\n current Board is:\n" + str(Node(gomoku_board, 2)))
 if __name__ == "__main__":
     #print("\n current Board is:\n" + str((gomoku_board, 2)))
-    red = minimax.MiniMax(1, 3)
+    red = reflex.ReflexAgent(1)
     blue = userplay.UserInterface(2)
     play_game(red, blue)

@@ -24,9 +24,16 @@ def print_user_board(game_board):
             user_game_board[x][y] = game_board[x-1][y-1]
     print((user_game_board))
     return 0
+def get_coordinates(game_board):
+    x = int (input("Enter X coordinate for stone (0-6): "))
+    y = int (input("Enter Y coordinate for stone (0-6): "))
+    pos = (6 - y,x)
+    return pos
 
 def get_move(game_board, player_num):
     print_user_board(game_board)
-    x = int (input("Enter X coordinate for stone (0-6): "))
-    y = int (input("Enter Y coordinate for stone (0-6): "))
-    return (6 - y,x)
+    playerPos = get_coordinates(game_board)
+    if game_board[playerPos[0]][playerPos[1]] != 0:
+        print("Error Please Try Again, space already taken")
+        playerPos = get_coordinates(game_board)
+    return playerPos
