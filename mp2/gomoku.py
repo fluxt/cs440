@@ -9,8 +9,7 @@ import alphabeta
 # initialize the board for the gomoko game
 gomoku_board = np.array([[0]*7]*7)
 #initialize alphabet array
-init_alpha_board = np.chararray((7,7))
-init_alpha_board[:] = '.'
+init_alpha_board = np.array([['.']*7]*7)
 
 # searches the board for a horizontal, vertical, or diagonal section that matches pattern
 # returns a tuple containing:
@@ -80,6 +79,11 @@ def get_game_status(game_board):
 
 	return 3
 
+def print_char_board(board):
+    print("BOARD:")
+    for row in board:
+        print("".join(row))
+
 def play_game(red, blue):
     game_board = gomoku_board
     alphabet_board = init_alpha_board
@@ -90,14 +94,14 @@ def play_game(red, blue):
         # set player to red
         game_board[current_move] = 1
         alphabet_board[current_move] = chr(ord('a')+ move_number)
-        print("Red's Move " + str(move_number))
-        userplay.print_user_board(game_board)
+        #print("Red's Move " + str(move_number))
+        #userplay.print_user_board(game_board)
         # check for winner
         game_status = get_game_status(game_board)
         if game_status == 1:
             print("RED WINS OHHH YEAHHHH!!")
         if game_status != 0:
-            print(alphabet_board)
+            print_char_board(alphabet_board)
             return game_status
 
 
@@ -106,14 +110,14 @@ def play_game(red, blue):
 		# set player to blue
         game_board[current_move] = 2
         alphabet_board[current_move] = chr(ord('A')+ move_number)
-        print("Blue's Move " + str(move_number))
-        userplay.print_user_board(game_board)
+        #print("Blue's Move " + str(move_number))
+        #userplay.print_user_board(game_board)
         # check for winner
         game_status = get_game_status(game_board)
         if game_status == 2:
             print("BLUE WINS AWWW YISSSS!!")
         if game_status != 0:
-            print(alphabet_board)
+            print_char_board(alphabet_board)
             return game_status
 
         move_number += 1
@@ -121,8 +125,9 @@ def play_game(red, blue):
 #print("\n current Board is:\n" + str(Node(gomoku_board, 2)))
 if __name__ == "__main__":
     #print("\n current Board is:\n" + str((gomoku_board, 2)))
-	agent_red = userplay.UserInterface(1)
-	agent_blu = alphabeta.AlphaBeta(2, 3)
+	agent_red = reflex.ReflexAgent(1)
+	#agent_blu = reflex.ReflexAgent(2)
+	agent_blu = userplay.UserInterface(2)
 	play_game(agent_red, agent_blu)
 
     # board = np.array([[1, 2, 1, 1, 2, 2, 1],
