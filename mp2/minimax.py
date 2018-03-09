@@ -15,18 +15,27 @@ class MiniMax:
 		return gomoku.get_game_status(game_board)
 
 	def heuristic(self, game_board):
-		result = gomoku.get_game_status(game_board)
-		if result == 1:
+		ret = 0.0
+		end_result = gomoku.get_game_status(game_board)
+		if end_result == 3:
+			return 0
+		elif end_result == 1:
 			return 10000
-		elif result == 2:
+		elif end_result == 2:
 			return -10000
-		return 0
+		for i in range(7):
+			for j in range(7):
+				if game_board[i][j] == 1:
+					ret += 3-max(abs(i-3), abs(j-3))
+				if game_board[i][j] == 2:
+					ret -= 3-max(abs(i-3), abs(j-3))
+		return ret
 
 	def getMove(self, game_board_original):
 		# make a copy
-		game_board = game_board_original[:]
-		if not np.any(game_board):
-			return (3, 3)
+		game_board = game_board_original.copy()
+		# if not np.any(game_board):
+		# 	return (3, 3)
 
 		empty_squares = [tuple(e) for e in np.argwhere(game_board==0)]
 		if self.color == 1: # maximizing
@@ -69,10 +78,6 @@ class MiniMax:
 		return best_value
 
 if __name__ == "__main__":
-	agent = MiniMax(1, 3)
-	gomoku_board = np.array([[0]*7]*7)
-	gomoku_board[1][2] = 1
-	gomoku_board[2][3] = 1
-	gomoku_board[3][4] = 1
-	print(gomoku_board)
-	print(agent.getMove(gomoku_board))
+	agent_red = MiniMax(1, 3)
+	agent_blu = MiniMax(2, 3)
+	gomoku.play_game(agent_blu, agent_red)

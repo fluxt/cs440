@@ -3,6 +3,7 @@ import time
 import numpy as np
 import reflex
 import minimax
+import userplay
 import alphabeta
 
 # initialize the board for the gomoko game
@@ -46,7 +47,7 @@ def get_pattern_position(board, pattern):
                 return ((x, y), (x+size-1, y+size-1))
 
     # top-right to bottom-left diagonal
-    for x in range(8 - size, 7):
+    for x in range(size-1, 7):
         for y in range(8 - size):
             good = True
             for i in range(size):
@@ -80,6 +81,7 @@ def get_game_status(game_board):
 def play_game(red, blue):
     game_board = gomoku_board
     while True:
+        #check red move
         current_move = red.getMove(game_board)
         # set player to red
         game_board[current_move] = 1
@@ -87,8 +89,11 @@ def play_game(red, blue):
         userplay.print_user_board(game_board)
         # check for winner
         game_status = get_game_status(game_board)
+        if game_status == 1:
+            print("RED WINS OHHH YEAHHHH!!")
         if game_status != 0:
             return game_status
+
         #check blue move
         current_move = blue.getMove(game_board)
 		# set player to blue
@@ -97,6 +102,8 @@ def play_game(red, blue):
         userplay.print_user_board(game_board)
         # check for winner
         game_status = get_game_status(game_board)
+        if game_status == 2:
+            print("BLUE WINS AWWW YISSSS!!")
         if game_status != 0:
             return game_status
 
@@ -104,6 +111,16 @@ def play_game(red, blue):
 #print("\n current Board is:\n" + str(Node(gomoku_board, 2)))
 if __name__ == "__main__":
     #print("\n current Board is:\n" + str((gomoku_board, 2)))
-    red = minimax.MiniMax(1, 3)
-    blue = userplay.UserInterface(2)
-    play_game(red, blue)
+	agent_red = userplay.UserInterface(1)
+	agent_blu = alphabeta.AlphaBeta(2, 3)
+	play_game(agent_red, agent_blu)
+
+    # board = np.array([[1, 2, 1, 1, 2, 2, 1],
+    #                   [2, 2, 1, 2, 1, 1, 1],
+    #                   [2, 1, 2, 1, 2, 2, 1],
+    #                   [1, 1, 1, 1, 2, 2, 2],
+    #                   [0, 2, 1, 2, 2, 2, 0],
+    #                   [0, 2, 1, 2, 1, 1, 0],
+    #                   [0, 0, 0, 0, 1, 0, 0]])
+    
+    # print(get_game_status(board))
