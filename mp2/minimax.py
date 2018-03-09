@@ -27,7 +27,7 @@ class MiniMax:
 			for j in range(7):
 				if game_board[i][j] == 1:
 					ret += 3-max(abs(i-3), abs(j-3))
-				if game_board[i][j] == 2:
+				elif game_board[i][j] == 2:
 					ret -= 3-max(abs(i-3), abs(j-3))
 		return ret
 
