@@ -8,6 +8,9 @@ import alphabeta
 
 # initialize the board for the gomoko game
 gomoku_board = np.array([[0]*7]*7)
+#initialize alphabet array
+init_alpha_board = np.chararray((7,7))
+init_alpha_board[:] = '.'
 
 # searches the board for a horizontal, vertical, or diagonal section that matches pattern
 # returns a tuple containing:
@@ -77,40 +80,47 @@ def get_game_status(game_board):
 
 	return 3
 
-
 def play_game(red, blue):
     game_board = gomoku_board
+    alphabet_board = init_alpha_board
+    move_number = 0
     while True:
         #check red move
         current_move = red.getMove(game_board)
         # set player to red
         game_board[current_move] = 1
-        print("Red's Move")
+        alphabet_board[current_move] = chr(ord('a')+ move_number)
+        print("Red's Move " + str(move_number))
         userplay.print_user_board(game_board)
         # check for winner
         game_status = get_game_status(game_board)
         if game_status == 1:
             print("RED WINS OHHH YEAHHHH!!")
         if game_status != 0:
+            print(alphabet_board)
             return game_status
+
 
         #check blue move
         current_move = blue.getMove(game_board)
         # set player to blue
         game_board[current_move] = 2
-        print("Blue's Move")
+        alphabet_board[current_move] = chr(ord('A')+ move_number)
+        print("Blue's Move " + str(move_number))
         userplay.print_user_board(game_board)
         # check for winner
         game_status = get_game_status(game_board)
         if game_status == 2:
             print("BLUE WINS AWWW YISSSS!!")
         if game_status != 0:
+            print(alphabet_board)
             return game_status
 
+        move_number += 1
 
 #print("\n current Board is:\n" + str(Node(gomoku_board, 2)))
 if __name__ == "__main__":
     #print("\n current Board is:\n" + str((gomoku_board, 2)))
-    red = reflex.ReflexAgent(1)
-    blue = userplay.UserInterface(2)
+    red = alphabeta.AlphaBeta(1,3)
+    blue = alphabeta.AlphaBeta(2,3)
     play_game(red, blue)
