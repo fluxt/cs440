@@ -1,22 +1,24 @@
-
 import numpy as np
 import gomoku
-import copy
 
 class AlphaBeta:
 	def __init__(self, color, max_depth):
 		self.color = color
 		self.max_depth = max_depth-1
+		self.nodes_expanded = []
+		self.total_nodes = 0
 
-# 0 if didn't end
-# 1 if red won
-# 2 if blue won
-# 3 if draw
+	def get_nodes_expanded(self):
+		return self.nodes_expanded
+
+	def reset(self):
+		self.total_nodes = 0
+
 	def check_end(self, game_board):
 		return gomoku.get_game_status(game_board)
 
 	def heuristic(self, game_board):
-		ret = 0.0
+		ret = 0
 		end_result = gomoku.get_game_status(game_board)
 		if end_result == 3:
 			return 0
@@ -24,12 +26,6 @@ class AlphaBeta:
 			return 10000
 		elif end_result == 2:
 			return -10000
-		for i in range(7):
-			for j in range(7):
-				if game_board[i][j] == 1:
-					ret += 3-max(abs(i-3), abs(j-3))
-				elif game_board[i][j] == 2:
-					ret -= 3-max(abs(i-3), abs(j-3))
 
 		if gomoku.has_pattern_position(game_board, [0, 1, 1, 1, 1, 0]):
 			ret += 500
@@ -43,13 +39,20 @@ class AlphaBeta:
 		if gomoku.has_pattern_position(game_board, [0, 2, 2, 2, 0]):
 			ret -= 100
 
+		for i in range(7):
+			for j in range(7):
+				if game_board[i][j] == 1:
+					ret += 3-max(abs(i-3), abs(j-3))
+				elif game_board[i][j] == 2:
+					ret -= 3-max(abs(i-3), abs(j-3))
+
 		return ret
 
 	def getMove(self, game_board_original):
 		# make a copy
 		game_board = game_board_original.copy()
-		# if not np.any(game_board):
-		# 	return (3, 3)
+		
+		self.total_nodes = 1
 
 		a = float("-inf")
 		b = float("inf")
@@ -75,11 +78,15 @@ class AlphaBeta:
 					best_coord = coord
 				b = min(b, best_value)
 				game_board[coord] = 0
+		
+		self.nodes_expanded.append(self.total_nodes)
 		return best_coord
 
 	def getMoveRecursive(self, game_board, depth, a, b, color):
 		if depth == 0 or self.check_end(game_board) != 0:
 			return self.heuristic(game_board)
+
+		self.total_nodes += 1
 
 		empty_squares = [tuple(e) for e in np.argwhere(game_board==0)]
 		if color == 1: # maximizing
@@ -104,3 +111,7 @@ if __name__ == "__main__":
 	agent_red = AlphaBeta(1, 3)
 	agent_blu = AlphaBeta(2, 3)
 	gomoku.play_game(agent_blu, agent_red)
+	print(agent_red.get_nodes_expanded())
+	agent_red.reset()
+	print(agent_blu.get_nodes_expanded())
+	agent_blu.reset()

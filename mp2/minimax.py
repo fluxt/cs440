@@ -5,11 +5,15 @@ class MiniMax:
 	def __init__(self, color, max_depth):
 		self.color = color
 		self.max_depth = max_depth-1
+		self.nodes_expanded = []
+		self.total_nodes = 0
 
-# 0 if didn't end
-# 1 if red won
-# 2 if blue won
-# 3 if draw
+	def get_nodes_expanded(self):
+		return self.nodes_expanded
+
+	def reset(self):
+		self.total_nodes = 0
+
 	def check_end(self, game_board):
 		return gomoku.get_game_status(game_board)
 
@@ -23,13 +27,6 @@ class MiniMax:
 		elif end_result == 2:
 			return -10000
 
-		for i in range(7):
-			for j in range(7):
-				if game_board[i][j] == 1:
-					ret += 3-max(abs(i-3), abs(j-3))
-				elif game_board[i][j] == 2:
-					ret -= 3-max(abs(i-3), abs(j-3))
-
 		if gomoku.has_pattern_position(game_board, [0, 1, 1, 1, 1, 0]):
 			ret += 500
 
@@ -42,13 +39,20 @@ class MiniMax:
 		if gomoku.has_pattern_position(game_board, [0, 2, 2, 2, 0]):
 			ret -= 100
 
+		for i in range(7):
+			for j in range(7):
+				if game_board[i][j] == 1:
+					ret += 3-max(abs(i-3), abs(j-3))
+				elif game_board[i][j] == 2:
+					ret -= 3-max(abs(i-3), abs(j-3))
+
 		return ret
 
 	def getMove(self, game_board_original):
 		# make a copy
 		game_board = game_board_original.copy()
-		# if not np.any(game_board):
-		# 	return (3, 3)
+		
+		self.total_nodes = 1
 
 		empty_squares = [tuple(e) for e in np.argwhere(game_board==0)]
 		if self.color == 1: # maximizing
@@ -69,11 +73,15 @@ class MiniMax:
 					best_value = value
 					best_coord = coord
 				game_board[coord] = 0
+		
+		self.nodes_expanded.append(self.total_nodes)
 		return best_coord
 
 	def getMoveRecursive(self, game_board, depth, color):
 		if depth == 0 or self.check_end(game_board) != 0:
 			return self.heuristic(game_board)
+
+		self.total_nodes += 1
 
 		empty_squares = [tuple(e) for e in np.argwhere(game_board==0)]
 		if color == 1: # maximizing
