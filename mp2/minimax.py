@@ -102,3 +102,7 @@ if __name__ == "__main__":
 	agent_red = MiniMax(1, 3)
 	agent_blu = MiniMax(2, 3)
 	gomoku.play_game(agent_blu, agent_red)
+	print(agent_red.get_nodes_expanded())
+	agent_red.reset()
+	print(agent_blu.get_nodes_expanded())
+	agent_blu.reset()
