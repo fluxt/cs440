@@ -31,16 +31,30 @@ class AlphaBeta:
 
 		# if four in a row with unblocked ends exist, give 500 points
 		if gomoku.has_pattern_position(game_board, [0, 1, 1, 1, 1, 0]):
-			ret += 500
+			ret += 1000
 
 		if gomoku.has_pattern_position(game_board, [0, 2, 2, 2, 2, 0]):
-			ret -= 500
+			ret -= 1000
 
 		# if three in a row with unblocked ends exist, give 100 points
 		if gomoku.has_pattern_position(game_board, [0, 1, 1, 1, 0]):
 			ret += 100
 
 		if gomoku.has_pattern_position(game_board, [0, 2, 2, 2, 0]):
+			ret -= 100
+
+		# if three in a row with unblocked ends exist, give 100 points
+		if gomoku.has_pattern_position(game_board, [0, 1, 1, 0, 1, 0]):
+			ret += 100
+
+		if gomoku.has_pattern_position(game_board, [0, 2, 2, 0, 2, 0]):
+			ret -= 100
+
+		# if three in a row with unblocked ends exist, give 100 points
+		if gomoku.has_pattern_position(game_board, [0, 1, 0, 1, 1, 0]):
+			ret += 100
+
+		if gomoku.has_pattern_position(game_board, [0, 2, 0, 2, 2, 0]):
 			ret -= 100
 
 		# incentivize center positions over edges
@@ -61,7 +75,7 @@ class AlphaBeta:
 		a = float("-inf")
 		b = float("inf")
 
-        # list of all possible moves
+		# list of all possible moves
 		empty_squares = [tuple(e) for e in np.argwhere(game_board==0)]
 		if self.color == 1: # maximizing
 			best_value = float("-inf")
