@@ -81,12 +81,10 @@ def print_char_board(board):
 	for row in reversed(board.T):
 		print("".join(row))
 
-def play_game(red, blue, game_board=False, alphabet_board=False, move_number=0):
-	if (not game_board):
-		game_board = get_initial_board()
-
-	if (not alphabet_board):
-		alphabet_board = get_init_alpha_board()
+def play_game(red, blue):
+	game_board = get_initial_board()
+	alphabet_board = get_init_alpha_board()
+	move_number = 0
 
 	while True:
 		#check red move
