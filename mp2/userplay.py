@@ -21,14 +21,14 @@ def print_user_board(game_board):
     print("\n current board is: \n")
     for x in range(1,8):
         for y in range (1,8):
-            user_game_board[x][y] = game_board[x-1][y-1]
+            user_game_board[x][y] = game_board[y-1][7-x] #[x-1][y-1]
     print(user_game_board)
     return 0
 
 def get_coordinates(game_board):
     x = int (input("Enter X coordinate for stone (0-6): "))
     y = int (input("Enter Y coordinate for stone (0-6): "))
-    pos = (6 - y,x)
+    pos = (x,y)
     return pos
 
 def get_move(game_board, player_num):
