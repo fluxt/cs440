@@ -12,7 +12,7 @@ class MiniMax:
 		return self.nodes_expanded
 
 	def reset(self):
-		self.total_nodes = 0
+		self.nodes_expanded = []
 
 	def check_end(self, game_board):
 		return gomoku.get_game_status(game_board)
