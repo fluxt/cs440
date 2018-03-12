@@ -134,17 +134,14 @@ if __name__ == "__main__":
 	reflex_red = reflex.ReflexAgent(1)
 	reflex_blue = reflex.ReflexAgent(2)
 
-	print ("Reflex vs Reflex")
-	play_game(reflex_red, reflex_blue)
-
 	print ("Alpha-Beta vs MiniMax")
 	start_1 = time.time()
 	play_game(alpha_beta_red, minimax_blue)
 	end_1 = time.time()
 	print("total runtime : {0:.3f} seconds".format(end_1-start_1))
-	print(alpha_beta_red.get_nodes_expanded())
+	print("Red nodes expanded: " + str(alpha_beta_red.get_nodes_expanded()))
 	alpha_beta_red.reset()
-	print(minimax_blue.get_nodes_expanded())
+	print("Blue nodes expanded: " + str(minimax_blue.get_nodes_expanded()))
 	minimax_blue.reset()
 
 	print ("MiniMax vs Alpha-Beta")
@@ -152,9 +149,9 @@ if __name__ == "__main__":
 	play_game(minimax_red, alpha_beta_blue)
 	end_2 = time.time()
 	print("total runtime : {0:.3f} seconds".format(end_2-start_2))
-	print(minimax_red.get_nodes_expanded())
+	print("Red nodes expanded: " + str(minimax_red.get_nodes_expanded()))
 	minimax_red.reset()
-	print(alpha_beta_blue.get_nodes_expanded())
+	print("Blue nodes expanded: " + str(alpha_beta_blue.get_nodes_expanded()))
 	alpha_beta_blue.reset()
 
 	print("Alpha-Beta vs Reflex")
@@ -162,7 +159,7 @@ if __name__ == "__main__":
 	play_game(alpha_beta_red, reflex_blue)
 	end_3 = time.time()
 	print("total runtime : {0:.3f} seconds".format(end_3-start_3))
-	print(alpha_beta_red.get_nodes_expanded())
+	print("Red nodes expanded: " + str(alpha_beta_red.get_nodes_expanded()))
 	alpha_beta_red.reset()
 
 	print("Reflex vs Alpha-Beta")
@@ -170,7 +167,7 @@ if __name__ == "__main__":
 	play_game(reflex_red, alpha_beta_blue)
 	end_4 = time.time()
 	print("total runtime : {0:.3f} seconds".format(end_4-start_4))
-	print(alpha_beta_blue.get_nodes_expanded())
+	print("Blue nodes expanded: " + str(alpha_beta_blue.get_nodes_expanded()))
 	alpha_beta_blue.reset()
 
 	print("Reflex vs MiniMax")
@@ -178,7 +175,7 @@ if __name__ == "__main__":
 	play_game(reflex_red, minimax_blue)
 	end_5 = time.time()
 	print("total runtime : {0:.3f} seconds".format(end_5-start_5))
-	print(minimax_blue.get_nodes_expanded())
+	print("Blue nodes expanded: " + str(minimax_blue.get_nodes_expanded()))
 	minimax_blue.reset()
 
 	print("MiniMax vs Reflex")
@@ -186,5 +183,5 @@ if __name__ == "__main__":
 	play_game(minimax_red, reflex_blue)
 	end_6 = time.time()
 	print("total runtime : {0:.3f} seconds".format(end_6-start_6))
-	print(minimax_red.get_nodes_expanded())
+	print("Red nodes expanded: " + str(minimax_red.get_nodes_expanded()))
 	minimax_red.reset()
