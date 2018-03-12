@@ -10,9 +10,7 @@ class ReflexAgent:
         return move
 
 # searches the board for a horizontal, vertical, or diagonal section that matches pattern
-# returns a tuple containing:
-#   the left-most, then top-most position of the found pattern
-#     the position at the opposite end of the pattern
+# returns a list of tuples representing the locations where the pattern was found
 def get_pattern_positions(board, pattern, ret_idxs):
     size = len(pattern)
     ret = []
@@ -182,6 +180,50 @@ def get_move(board, player_num):
     empty = [tuple(e) for e in np.argwhere(board==0)]
     return empty[0]
 
+def print_char_board(board):
+	print("BOARD:")
+	for row in reversed(board.T):
+		print("".join(row))
+
+def play_game(red, blue, game_board, alphabet_board, move_number):
+	while True:
+		#check red move
+		current_move = red.getMove(game_board)
+		# set player to red
+		game_board[current_move] = 1
+		alphabet_board[current_move] = chr(ord('a')+ move_number)
+		#print("Red's Move " + str(move_number))
+		#userplay.print_user_board(game_board)
+		# check for winner
+		game_status = gomoku.get_game_status(game_board)
+		if game_status == 1:
+			print("RED WINS!")
+		if game_status == 3:
+			print("ITS A TIE!")
+		if game_status != 0:
+			print_char_board(alphabet_board)
+			return game_status
+
+
+		#check blue move
+		current_move = blue.getMove(game_board)
+		# set player to blue
+		game_board[current_move] = 2
+		alphabet_board[current_move] = chr(ord('A')+ move_number)
+		#print("Blue's Move " + str(move_number))
+		#userplay.print_user_board(game_board)
+		# check for winner
+		game_status = gomoku.get_game_status(game_board)
+		if game_status == 2:
+			print("BLUE WINS!")
+		if game_status == 3:
+			print("ITS A TIE!")
+		if game_status != 0:
+			print_char_board(alphabet_board)
+			return game_status
+
+		move_number += 1
+
 if __name__ == "__main__":
     board = gomoku.get_initial_board()
     char_board = gomoku.get_init_alpha_board()
@@ -192,4 +234,4 @@ if __name__ == "__main__":
     reflex_red = ReflexAgent(1)
     reflex_blue = ReflexAgent(2)
 
-    gomoku.play_game(reflex_red, reflex_blue, game_board=board, alphabet_board=char_board, move_number=1)
+    play_game(reflex_red, reflex_blue, game_board=board, alphabet_board=char_board, move_number=1)
