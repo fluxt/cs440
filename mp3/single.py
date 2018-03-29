@@ -1,24 +1,64 @@
 import numpy as np
 import utils
+import math
 
-number_size = 10
+num_digits = 10
 img_width = 32
 img_height = 32
+laplace_smoothing = 1.0
 
 class SinglePixelFeatures:
-    def __init__(self, images, numbers):
-        if np.size(images, 0) != np.size(numbers, 0):
+    def __init__(self, train_images, train_numbers):
+        if np.size(train_images, 0) != np.size(train_numbers, 0):
             print("Error: image size does not match numbers size")
             return
 
-        self.size = numbers.size
-        self.count = np.zeros((number_size, img_width*img_height), dtype=int)
+        self.size = train_numbers.size
+        self.black_count = np.zeros((num_digits, img_width*img_height), dtype=int)
+        self.digit_count = np.bincount(train_numbers)
         for i in range(self.size):
-            self.count[numbers[i]] += images[i]
+            self.black_count[train_numbers[i]] += train_images[i]
+
+    def get_priors(self, index, digit, feature):
+        black_prior = ( self.black_count[digit][index] + laplace_smoothing ) / ( self.digit_count[digit] + 2*laplace_smoothing )
+        if feature == 1:
+            return black_prior
+        else:
+            return 1-black_prior
+
+    def classify(self, test_image):
+        probabilities = np.zeros((num_digits), dtype=float)
+        for digit in range(num_digits):
+            digit_prob = math.log(self.digit_count[digit]/self.size)
+            for index in range(img_width*img_height):
+                digit_prob += math.log(self.get_priors(index, digit, test_image[index]))
+            probabilities[digit] = digit_prob
+
+        output = np.argmax(probabilities)
+        return output, probabilities
+
+    def evaluate(self, test_images, test_numbers):
+        if np.size(test_images, 0) != np.size(test_numbers, 0):
+            print("Error: image size does not match numbers size")
+            return
+
+        accuracy = 0
+        for i in range(test_numbers.size):
+            output, _ = self.classify(test_images[i])
+            if output == test_numbers[i]:
+                accuracy += 1
+
+        accuracy /= test_numbers.size
+
+        return accuracy
 
 if __name__ == "__main__":
-    images, numbers = utils.get_train_data()
-    single_pixel = SinglePixelFeatures(images, numbers)
-    np.set_printoptions(threshold=np.inf)
-    print(single_pixel.count[7].reshape(32,32))
-    
+    train_images, train_numbers = utils.get_train_data()
+    test_images, test_numbers = utils.get_test_data()
+
+    classifier = SinglePixelFeatures(train_images, train_numbers)
+    output, probabilities = classifier.classify(test_images[2])
+    print("The third image (index 2) at test data is digit {}".format(output))
+
+    accuracy = classifier.evaluate(test_images, test_numbers)
+    print("Accuracy over all of test data: {:.2%}".format(accuracy))
