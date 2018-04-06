@@ -40,7 +40,7 @@ class SinglePixelClassifier:
     def evaluate(self, test_images, test_numbers):
         if np.size(test_images, 0) != np.size(test_numbers, 0):
             print("Error: image size does not match numbers size")
-            return
+            return 0.0
 
         accuracy = 0
         for i in range(test_numbers.size):
