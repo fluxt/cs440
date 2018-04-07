@@ -42,14 +42,26 @@ class SinglePixelClassifier:
             print("Error: image size does not match numbers size")
             return 0.0
 
-        accuracy = 0
+        accuracy = 0.0
         confusion_matrix_accumulator = np.zeros((num_digits, num_digits), dtype=int)
         confusion_matrix = np.zeros((num_digits, num_digits), dtype=float)
+        # self.most_prototypical = (0, float("-Inf"), 0, 0)
+        # self.least_prototypical = (0, float("Inf"), 0, 0)
+        self.most_prototypical = [ (0, float("-Inf"), 0, 0) ] * num_digits
+        self.least_prototypical = [ (0, float("Inf"), 0, 0) ] * num_digits
         for i in range(test_numbers.size):
-            output, _ = self.classify(test_images[i])
-            if output == test_numbers[i]:
+            output, posterior_probabilities = self.classify(test_images[i])
+
+            # update accuracy, confusion matrix, most_prototytpical, and least_prototypical
+            truth_label = test_numbers[i]
+            posterior_probability = posterior_probabilities[output]
+            if output == truth_label:
                 accuracy += 1
-            confusion_matrix_accumulator[test_numbers[i]][output] += 1
+            confusion_matrix_accumulator[truth_label][output] += 1
+            if (posterior_probability > self.most_prototypical[truth_label][1]):
+                self.most_prototypical[truth_label] = (i, posterior_probability, truth_label, output)
+            if (posterior_probability < self.least_prototypical[truth_label][1]):
+                self.least_prototypical[truth_label] = (i, posterior_probability, truth_label, output)
 
         accuracy /= test_numbers.size
 
@@ -58,6 +70,13 @@ class SinglePixelClassifier:
 
         return accuracy, confusion_matrix
 
+    def get_prototypical(self):
+        return self.most_prototypical, self.least_prototypical
+
+    def get_odds_ratio(self, images, numbers):
+        # count = np.zeros((num_digits, img_width*img_height), dtype=int)
+        return
+
 if __name__ == "__main__":
     np.set_printoptions(threshold=np.nan)
 
@@ -65,8 +84,22 @@ if __name__ == "__main__":
     test_images, test_numbers = utils.get_test_data()
 
     classifier = SinglePixelClassifier(train_images, train_numbers)
-    print("Evaluating...")
+
     accuracy, confusion_matrix = classifier.evaluate(test_images, test_numbers)
-    print("Accuracy over all of test data: {:.2%}".format(accuracy))
-    print("Confusion matrix:")
+
+    print("\nAccuracy over all of test data: {:.2%}".format(accuracy))
+
+    print("\nConfusion matrix:")
     print(np.around(confusion_matrix, 3))
+
+    most_prototypical, least_prototypical = classifier.get_prototypical()
+
+    print("\nMost Prototypical:")
+    for i in range(num_digits):
+        print(most_prototypical[i])
+        utils.write_image_to_file("most-prototytpical"+str(i)+".png", test_images[most_prototypical[i][0]])
+
+    print("\nLeast Prototypical:")
+    for i in range(num_digits):
+        print(least_prototypical[i])
+        utils.write_image_to_file("least-prototytpical"+str(i)+".png", test_images[least_prototypical[i][0]])
