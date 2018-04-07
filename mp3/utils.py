@@ -1,7 +1,6 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import matplotlib.image as mpimg
-import colorsys
+import matplotlib.pyplot as plt
 
 img_width = 32
 img_height = 32
@@ -33,3 +32,6 @@ def get_train_data():
 
 def write_image_to_file(filename, image):
     mpimg.imsave(filename, image.astype(float).reshape((img_width, img_height)), cmap='binary')
+
+def write_image_to_file_colored(filename, image):
+    plt.imsave(filename, image.astype(float).reshape((img_width, img_height)), cmap="jet")

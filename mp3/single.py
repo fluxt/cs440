@@ -14,13 +14,13 @@ class SinglePixelClassifier:
 
         self.laplace_smoothing = laplace_smoothing
         self.size = train_numbers.size
-        self.black_count = np.zeros((num_digits, img_width*img_height), dtype=int)
-        self.digit_count = np.bincount(train_numbers)
+        self.black_count = np.zeros((num_digits, img_width*img_height)) + self.laplace_smoothing
+        self.digit_count = np.bincount(train_numbers) + 2 * self.laplace_smoothing
         for i in range(self.size):
             self.black_count[train_numbers[i]] += train_images[i]
 
     def get_priors(self, index, digit, feature):
-        black_prior = ( self.black_count[digit][index] + self.laplace_smoothing ) / ( self.digit_count[digit] + 2*self.laplace_smoothing )
+        black_prior = self.black_count[digit][index] / self.digit_count[digit]
         if feature == 1:
             return black_prior
         else:
@@ -71,9 +71,11 @@ class SinglePixelClassifier:
     def get_prototypical(self):
         return self.most_prototypical, self.least_prototypical
 
-    def get_odds_ratio(self, images, numbers):
-        # count = np.zeros((num_digits, img_width*img_height), dtype=int)
-        return
+    def get_odds_ratio(self, a, b):
+        a_map = self.black_count[a] / self.digit_count[a]
+        b_map = self.black_count[b] / self.digit_count[b]
+        odds_map = a_map / b_map
+        return np.log(a_map), np.log(b_map), np.log(odds_map)
 
 if __name__ == "__main__":
     np.set_printoptions(threshold=np.nan)
@@ -95,9 +97,14 @@ if __name__ == "__main__":
     print("\nMost Prototypical: (index, prior, truth label, classifier output)")
     for i in range(num_digits):
         print(most_prototypical[i])
-        utils.write_image_to_file("most-prototytpical"+str(i)+".png", test_images[most_prototypical[i][0]])
+        utils.write_image_to_file_colored("most-prototytpical"+str(i)+".png", test_images[most_prototypical[i][0]])
 
     print("\nLeast Prototypical: (index, prior, truth label, classifier output)")
     for i in range(num_digits):
         print(least_prototypical[i])
-        utils.write_image_to_file("least-prototytpical"+str(i)+".png", test_images[least_prototypical[i][0]])
+        utils.write_image_to_file_colored("least-prototytpical"+str(i)+".png", test_images[least_prototypical[i][0]])
+
+    a_map, b_map, odds_map = classifier.get_odds_ratio(1, 8)
+    utils.write_image_to_file_colored("0_map.png", a_map)
+    utils.write_image_to_file_colored("1_map.png", b_map)
+    utils.write_image_to_file_colored("odds_map.png", odds_map)
