@@ -3,10 +3,17 @@ import utils
 import math
 import random
 
+bias = True
+random_init_weights = True
+random_order = True
+
 num_digits = 10
 img_width = 32
 img_height = 32
 img_size = img_width * img_height
+
+if (bias):
+    img_size += 1
 #sklearn.metrics enables the use of confusion matrices. use confusion_matrix(x_act, x_predict)
 #This solution of this matrix will output a numpy array
 
@@ -24,13 +31,14 @@ class PerceptionLearningRule:
 
         #biases: initialized randomly utilizing a gaussian distribution
         self.train_images = train_images
-        #self.images = np.concatenate((train_images, np.array([[1] for n in range(self.num_images)])), axis=1)
 
         self.train_numbers = train_numbers
 
         #weights: initialized randomly using gaussian dist. mean 0/var 1
-        self.weights = np.array([[random.random() - .5 for x  in range(img_size)] for y in range(num_digits)])
-        #self.weights = np.array([[random.random() - .5 for x  in range(img_size)] for y in range(num_digits)])
+        if random_init_weights:
+            self.weights = np.array([[random.random() - .5 for x  in range(img_size)] for y in range(num_digits)])
+        else:
+            self.weights = np.zeros(num_digits, img_size)
 
     def get_output(self, image):
         return np.array([np.dot(image, self.weights[i]) for i in range(num_digits)])
@@ -53,8 +61,12 @@ class PerceptionLearningRule:
         return (num_correct / len(test_numbers)), confusion_matrix
 
     def do_epoch(self, learning_rate = 0.001):
-        order = [i for i in range(self.num_images)] # randomize?
-        random.shuffle(order)
+        if random_order:
+            order = [i for i in range(self.num_images)]
+            random.shuffle(order)
+        else:
+            order = range(self.num_images)
+        
         for i in order:
             image = self.train_images[i]
             output = self.get_output(image)
@@ -64,12 +76,18 @@ class PerceptionLearningRule:
 
             self.weights += np.outer((goal_output - output), image) * learning_rate
 
+def add_bias(images):
+    return np.concatenate((images, np.array([[1] for n in range(images.shape[0])])), axis=1)
 
 if __name__ == "__main__":
     random.seed(10)
 
     train_images, train_numbers = utils.get_train_data()
     test_images, test_numbers = utils.get_test_data()
+
+    if (bias):
+        train_images = add_bias(train_images)
+        test_images = add_bias(test_images)
 
     classifier = PerceptionLearningRule(train_images, train_numbers)
 
