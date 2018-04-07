@@ -1,4 +1,7 @@
 import numpy as np
+import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
+import colorsys
 
 img_width = 32
 img_height = 32
@@ -27,3 +30,6 @@ def get_test_data():
 
 def get_train_data():
     return get_data("digitdata/optdigits-orig_train.txt")
+
+def write_image_to_file(filename, image):
+    mpimg.imsave(filename, image.astype(float), cmap='binary')
