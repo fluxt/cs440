@@ -43,20 +43,30 @@ class SinglePixelClassifier:
             return 0.0
 
         accuracy = 0
+        confusion_matrix_accumulator = np.zeros((num_digits, num_digits), dtype=int)
+        confusion_matrix = np.zeros((num_digits, num_digits), dtype=float)
         for i in range(test_numbers.size):
             output, _ = self.classify(test_images[i])
             if output == test_numbers[i]:
                 accuracy += 1
+            confusion_matrix_accumulator[test_numbers[i]][output] += 1
 
         accuracy /= test_numbers.size
 
-        return accuracy
+        for i in range(num_digits):
+            confusion_matrix[i] = confusion_matrix_accumulator[i] / np.sum(confusion_matrix_accumulator[i])
+
+        return accuracy, confusion_matrix
 
 if __name__ == "__main__":
+    np.set_printoptions(threshold=np.nan)
+
     train_images, train_numbers = utils.get_train_data()
     test_images, test_numbers = utils.get_test_data()
 
     classifier = SinglePixelClassifier(train_images, train_numbers)
     print("Evaluating...")
-    accuracy = classifier.evaluate(test_images, test_numbers)
+    accuracy, confusion_matrix = classifier.evaluate(test_images, test_numbers)
     print("Accuracy over all of test data: {:.2%}".format(accuracy))
+    print("Confusion matrix:")
+    print(np.around(confusion_matrix, 3))
