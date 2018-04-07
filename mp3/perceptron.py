@@ -120,9 +120,30 @@ if __name__ == "__main__":
 
             classifier.do_epoch(learning_rate = 1 / ((i+1) ** 0.5))
 
-        plt.plot(accuracies)
+        name = ""
+        if (bias):
+            name += "Bias, "
+        else:
+            name += "No Bias, "
 
+        if (random_init_weights):
+            name += "Rand. Init Weights, "
+        else:
+            name += "Weights Init to 0, "
+
+        if (random_order):
+            name += "Rnd. Training Order"
+        else:
+            name += "Set Training Order"
+
+        plt.plot(accuracies, label = name)
+
+    plt.title("Perceptron Accuracy by Epoch")
+    plt.xlabel("Epoch Number")
+    plt.ylabel("Accuracy")
+    plt.legend()
     plt.savefig("perceptron_accuracies.png")
+    plt.title("Perceptron Accuracy by Epoch (Zoom)")
     plt.ylim((0.85, 1))
     plt.savefig("perceptron_accuracies_zoom.png")
 
