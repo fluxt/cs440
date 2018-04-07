@@ -45,8 +45,6 @@ class SinglePixelClassifier:
         accuracy = 0.0
         confusion_matrix_accumulator = np.zeros((num_digits, num_digits), dtype=int)
         confusion_matrix = np.zeros((num_digits, num_digits), dtype=float)
-        # self.most_prototypical = (0, float("-Inf"), 0, 0)
-        # self.least_prototypical = (0, float("Inf"), 0, 0)
         self.most_prototypical = [ (0, float("-Inf"), 0, 0) ] * num_digits
         self.least_prototypical = [ (0, float("Inf"), 0, 0) ] * num_digits
         for i in range(test_numbers.size):
