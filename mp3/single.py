@@ -87,17 +87,17 @@ if __name__ == "__main__":
 
     print("\nAccuracy over all of test data: {:.2%}".format(accuracy))
 
-    print("\nConfusion matrix:")
+    print("\nConfusion matrix: row - truth label, column - classifier output")
     print(np.around(confusion_matrix, 3))
 
     most_prototypical, least_prototypical = classifier.get_prototypical()
 
-    print("\nMost Prototypical:")
+    print("\nMost Prototypical: (index, prior, truth label, classifier output)")
     for i in range(num_digits):
         print(most_prototypical[i])
         utils.write_image_to_file("most-prototytpical"+str(i)+".png", test_images[most_prototypical[i][0]])
 
-    print("\nLeast Prototypical:")
+    print("\nLeast Prototypical: (index, prior, truth label, classifier output)")
     for i in range(num_digits):
         print(least_prototypical[i])
         utils.write_image_to_file("least-prototytpical"+str(i)+".png", test_images[least_prototypical[i][0]])
