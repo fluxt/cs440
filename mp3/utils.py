@@ -32,4 +32,4 @@ def get_train_data():
     return get_data("digitdata/optdigits-orig_train.txt")
 
 def write_image_to_file(filename, image):
-    mpimg.imsave(filename, image.astype(float), cmap='binary')
+    mpimg.imsave(filename, image.astype(float).reshape((img_width, img_height)), cmap='binary')
