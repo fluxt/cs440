@@ -35,3 +35,9 @@ def write_image_to_file(filename, image):
 
 def write_image_to_file_colored(filename, image):
     plt.imsave(filename, image.astype(float).reshape((img_width, img_height)), cmap="jet")
+
+def write_image_to_file_colored_with_bar(filename, image):
+    plt.imshow(image.astype(float).reshape((img_width, img_height)), cmap="jet")
+    plt.colorbar()
+    plt.savefig(filename)
+    plt.clf()

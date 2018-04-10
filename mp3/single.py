@@ -7,12 +7,17 @@ img_width = 32
 img_height = 32
 
 class SinglePixelClassifier:
+    # constructor. perform training here
     def __init__(self, train_images, train_numbers, laplace_smoothing = 6.0):
+        # return error if image size does not match numbers size
         if np.size(train_images, 0) != np.size(train_numbers, 0):
             print("Error: image size does not match numbers size")
             return
 
+        # laplace smoothing is 6 unless you specify otherwise
         self.laplace_smoothing = laplace_smoothing
+
+        # performing training here we count the number of blacks and whites, and number of the features
         self.size = train_numbers.size
         self.black_count = np.zeros((num_digits, img_width*img_height))
         self.white_count = np.zeros((num_digits, img_width*img_height))
@@ -21,6 +26,7 @@ class SinglePixelClassifier:
             self.black_count[train_numbers[i]] += train_images[i]
             self.white_count[train_numbers[i]] += np.logical_not(train_images[i])
 
+    # classifier. pass image to check which one you get
     def classify(self, test_image):
         probabilities = np.zeros((num_digits))
         for digit in range(num_digits):
@@ -31,7 +37,6 @@ class SinglePixelClassifier:
                 else:
                     probabilities[digit] += np.log((self.white_count[digit][index] + self.laplace_smoothing) / (self.digit_count[digit] + 2 * self.laplace_smoothing))
 
-        # print(probabilities)
         output = np.argmax(probabilities)
         return output, probabilities
 
@@ -103,21 +108,21 @@ if __name__ == "__main__":
 
     print("\nPrinting Odds Ratio...")
     a_map, b_map, odds_map = classifier.get_odds_ratio(2, 8)
-    utils.write_image_to_file_colored("images/2-map.png", a_map)
-    utils.write_image_to_file_colored("images/8-map.png", b_map)
-    utils.write_image_to_file_colored("images/odds-map-2-8.png", odds_map)
+    utils.write_image_to_file_colored_with_bar("images/2-map.png", a_map)
+    utils.write_image_to_file_colored_with_bar("images/8-map.png", b_map)
+    utils.write_image_to_file_colored_with_bar("images/odds-map-2-8.png", odds_map)
 
     a_map, b_map, odds_map = classifier.get_odds_ratio(4, 7)
-    utils.write_image_to_file_colored("images/4-map.png", a_map)
-    utils.write_image_to_file_colored("images/7-map.png", b_map)
-    utils.write_image_to_file_colored("images/odds-map-4-7.png", odds_map)
+    utils.write_image_to_file_colored_with_bar("images/4-map.png", a_map)
+    utils.write_image_to_file_colored_with_bar("images/7-map.png", b_map)
+    utils.write_image_to_file_colored_with_bar("images/odds-map-4-7.png", odds_map)
 
     a_map, b_map, odds_map = classifier.get_odds_ratio(5, 9)
-    utils.write_image_to_file_colored("images/5-map.png", a_map)
-    utils.write_image_to_file_colored("images/9-map.png", b_map)
-    utils.write_image_to_file_colored("images/odds-map-5-9.png", odds_map)
+    utils.write_image_to_file_colored_with_bar("images/5-map.png", a_map)
+    utils.write_image_to_file_colored_with_bar("images/9-map.png", b_map)
+    utils.write_image_to_file_colored_with_bar("images/odds-map-5-9.png", odds_map)
 
     a_map, b_map, odds_map = classifier.get_odds_ratio(9, 7)
-    utils.write_image_to_file_colored("images/9-map.png", a_map)
-    utils.write_image_to_file_colored("images/7-map.png", b_map)
-    utils.write_image_to_file_colored("images/odds-map-9-7.png", odds_map)
+    utils.write_image_to_file_colored_with_bar("images/9-map.png", a_map)
+    utils.write_image_to_file_colored_with_bar("images/7-map.png", b_map)
+    utils.write_image_to_file_colored_with_bar("images/odds-map-9-7.png", odds_map)
