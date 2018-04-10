@@ -23,15 +23,15 @@ def get_face_data(data_file, labels_file):
     image_arrs = []
     labels = []
 
-    for img_num in range(len(lines // face_height)):
+    for img_num in range(len(image_data) // face_height):
         img_arr = []
         for i in range(face_height):
             line = lines[img_num * (face_height)]
-            img_arr.extend([face_char_to_num(c) for c in line.strip()])
-        line = lines[((img_num + 1) * face_height) - 1]
+            img_arr.extend([face_char_to_num(c) for c in image_data.strip()])
+        line = image_data[((img_num + 1) * face_height) - 1]
 
         img_arrs.append(img_arr)
-        labels.append(ord(labels_data[img_num]) - 48)
+        image_datas.append(ord(labels_data[img_num]) - 48)
     return np.array(image_arrs), np.array(labels)
 
 def get_data(filename):
