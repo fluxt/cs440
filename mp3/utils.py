@@ -26,10 +26,8 @@ def get_face_data(data_file, labels_file):
     for img_num in range(len(image_data) // face_height):
         img_arr = []
         for i in range(face_height):
-            line = image_data[img_num * (face_height)]
-            img_arr.extend([face_char_to_num(c) for c in line.strip()])
-        line = image_data[((img_num + 1) * face_height) - 1]
-
+            line = image_data[img_num * (face_height) + i]
+            img_arr.extend([face_char_to_num(c) for c in line.strip('\n')])
         img_arrs.append(img_arr)
         labels.append(ord(labels_data[img_num][0]) - 48)
     return np.array(img_arrs), np.array(labels)
@@ -64,6 +62,10 @@ def get_face_test_data():
 
 def get_face_train_data():
     return get_face_data("facedata/facedatatrain.txt", "facedata/facedatatrainlabels.txt")
+
+data, vals = get_face_train_data()
+print(data)
+print(vals)
 
 def write_image_to_file(filename, image):
     mpimg.imsave(filename, image.astype(float).reshape((img_width, img_height)), cmap='binary')
