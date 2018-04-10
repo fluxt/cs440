@@ -63,10 +63,6 @@ def get_face_test_data():
 def get_face_train_data():
     return get_face_data("facedata/facedatatrain.txt", "facedata/facedatatrainlabels.txt")
 
-data, vals = get_face_train_data()
-print(data)
-print(vals)
-
 def write_image_to_file(filename, image):
     mpimg.imsave(filename, image.astype(float).reshape((img_width, img_height)), cmap='binary')
 
