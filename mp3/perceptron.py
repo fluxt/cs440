@@ -9,11 +9,16 @@ import random
 num_digits = 10
 img_width = 32
 img_height = 32
+
+# standard deviation of the distribution of initial weights (when using randomized initial weights)
 init_weights_sd_dev = 10
 
+# folder to store created images in
 img_folder = "images/"
 
+# number of epochs to run each perceptron for
 num_epochs = 25
+# number of times to repeat each setup
 num_repeats = 20
 
 def learning_rate_function(time):
