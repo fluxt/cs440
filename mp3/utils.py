@@ -27,12 +27,12 @@ def get_face_data(data_file, labels_file):
         img_arr = []
         for i in range(face_height):
             line = image_data[img_num * (face_height)]
-            img_arr.extend([face_char_to_num(c) for c in image_data.strip()])
+            img_arr.extend([face_char_to_num(c) for c in line.strip()])
         line = image_data[((img_num + 1) * face_height) - 1]
 
         img_arrs.append(img_arr)
-        labels.append(ord(labels_data[img_num]) - 48)
-    return np.array(image_arrs), np.array(labels)
+        labels.append(ord(labels_data[img_num][0]) - 48)
+    return np.array(img_arrs), np.array(labels)
 
 def get_data(filename):
     lines = open(filename).readlines()
@@ -61,6 +61,8 @@ def get_train_data():
 
 def get_face_test_data():
     return get_face_data("facedata/facedatatest.txt", "facedata/facedatatestlabels.txt")
+
+get_face_test_data()
 
 def get_face_train_data():
     return get_face_data("facedata/facedatatrain.txt", "facedata/facedatatrainlabels.txt")
