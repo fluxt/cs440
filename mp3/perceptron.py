@@ -183,9 +183,9 @@ if __name__ == "__main__":
     # plot the accuracies of each of te setups on a log scale
     for i in range(8):
         plt.plot(1 - accuracies[i], label = names[i])
-    plt.title("Perceptron Accuracy by Epoch (Log scale)")
+    plt.title("Perceptron Error Rate by Epoch (Log scale)")
     plt.xlabel("Epoch Number")
-    plt.ylabel("1 - Accuracy (Training Data)")
+    plt.ylabel("Error Rate (Training Data)")
     plt.legend()
     plt.yscale('log', nonposy='clip')
     plt.xlim((0, num_epochs - 1))
