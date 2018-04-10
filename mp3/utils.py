@@ -18,7 +18,7 @@ def face_char_to_num(ch):
 
 def get_face_data(data_file, labels_file):
     image_data = open(data_file).readlines()
-    labels_data = open(data_file).readlines()
+    labels_data = open(labels_file).readlines()
 
     img_arrs = []
     labels = []
@@ -61,8 +61,6 @@ def get_train_data():
 
 def get_face_test_data():
     return get_face_data("facedata/facedatatest.txt", "facedata/facedatatestlabels.txt")
-
-get_face_test_data()
 
 def get_face_train_data():
     return get_face_data("facedata/facedatatrain.txt", "facedata/facedatatrainlabels.txt")
