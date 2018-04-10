@@ -65,6 +65,12 @@ class SinglePixelClassifier:
 
         return accuracy, confusion_matrix
 
+    # get odds ratio heatmap
+    def get_odds_ratio(self, a, b):
+        a_map = (self.black_count[a] + self.laplace_smoothing) / (self.digit_count[a] + 2.0 * self.laplace_smoothing)
+        b_map = (self.black_count[b] + self.laplace_smoothing) / (self.digit_count[b] + 2.0 * self.laplace_smoothing)
+        return np.log(a_map), np.log(b_map)
+
 if __name__ == "__main__":
     train_images, train_numbers = utils.get_face_train_data()
     test_images, test_numbers = utils.get_face_test_data()
@@ -79,3 +85,8 @@ if __name__ == "__main__":
 
     print("\nConfusion matrix: row - truth label, column - classifier output")
     print(np.around(confusion_matrix, 3))
+
+    print("\nPrinting Feature Likelihood...")
+    a_map, b_map = classifier.get_odds_ratio(0, 1)
+    utils.write_face_to_file_colored_with_bar("images/nonface.png", a_map)
+    utils.write_face_to_file_colored_with_bar("images/face.png", b_map)
