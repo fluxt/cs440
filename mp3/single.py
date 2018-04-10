@@ -37,6 +37,7 @@ class SinglePixelClassifier:
                 else:
                     probabilities[digit] += np.log((self.white_count[digit][index] + self.laplace_smoothing) / (self.digit_count[digit] + 2 * self.laplace_smoothing))
 
+        # output the digit with the highest posterior probability
         output = np.argmax(probabilities)
         return output, probabilities
 
@@ -46,10 +47,11 @@ class SinglePixelClassifier:
             return 0.0
 
         accuracy = 0.0
-        confusion_matrix = np.zeros((num_digits, num_digits), dtype=float)
+        confusion_matrix = np.zeros((num_digits, num_digits))
         self.most_prototypical = [ (0, float("-Inf"), 0, 0) ] * num_digits
         self.least_prototypical = [ (0, float("Inf"), 0, 0) ] * num_digits
         for i in range(test_numbers.size):
+            # get output based on test images
             output, posterior_probabilities = self.classify(test_images[i])
 
             # update accuracy, confusion matrix, most_prototytpical, and least_prototypical
@@ -70,9 +72,11 @@ class SinglePixelClassifier:
 
         return accuracy, confusion_matrix
 
+    # get most/least prototypical
     def get_prototypical(self):
         return self.most_prototypical, self.least_prototypical
 
+    # get odds ratio heatmap
     def get_odds_ratio(self, a, b):
         a_map = (self.black_count[a] + self.laplace_smoothing) / (self.digit_count[a] + 2.0 * self.laplace_smoothing)
         b_map = (self.black_count[b] + self.laplace_smoothing) / (self.digit_count[b] + 2.0 * self.laplace_smoothing)
@@ -80,13 +84,13 @@ class SinglePixelClassifier:
         return np.log(a_map), np.log(b_map), np.log(odds_map)
 
 if __name__ == "__main__":
-    np.set_printoptions(threshold=np.nan)
-
     train_images, train_numbers = utils.get_train_data()
     test_images, test_numbers = utils.get_test_data()
 
+    # train here
     classifier = SinglePixelClassifier(train_images, train_numbers)
 
+    # classify here
     accuracy, confusion_matrix = classifier.evaluate(test_images, test_numbers)
 
     print("\nAccuracy over all of test data: {:.2%}".format(accuracy))
