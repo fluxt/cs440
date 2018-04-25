@@ -18,7 +18,11 @@ class Game:
     def lost_game(self):
         return (self.ball_x > 1)
 
+    # returns the reward for the action taken (-1, 0, or 1)
     def do_frame(self, act):
+        if self.lost_game():
+            return -1
+
         self.paddle_y += act.value
 
         if (self.paddle_y < 0):
@@ -47,3 +51,11 @@ class Game:
                 self.velocity_x = 0.03 if self.velocity_x > 0 else -0.03
 
             self.velocity_y = velocity_y + random(-.03, .03)
+            return 1
+        return 0
+
+    def get_state(self):
+        return (self.ball_x, self.ball_y, self.velocity_x, self.velocity_y, self.paddle_y)
+
+    def get_discrete_state(self):
+        return (-1, -1, -1, -1, -1) if lost_game else (int(self.ball_x * 12), int(self.ball_y * 12), -1 if self.velocity_x < 0 else 1, -1 if self.velocity_y < -0.015 elif self.velocity_y > 0.015 1 else 0, 11 if paddle_y == 1 - paddle_height else int(12 * paddle_y(1 - paddle_height)))
