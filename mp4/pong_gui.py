@@ -52,5 +52,6 @@ if __name__ == "__main__":
         g = game.Game()
         gui_refresh(g, 100)
         while not g.lost_game():
-            g.do_frame(random.choice([game.Action.NOTHING,game.Action.UP,game.Action.DOWN]))
+            action = random.choice([game.Action.NOTHING,game.Action.UP,game.Action.DOWN])
+            g.do_frame(action)
             gui_refresh(g, 100)
