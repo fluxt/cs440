@@ -16,7 +16,9 @@ class Game:
         self.velocity_x = 0.03
         self.velocity_y = 0.01
         self.paddle_y = 0.5 - (paddle_height / 2)
+
         self.current_reward = 0
+        self.bounces = 0
 
     def lost_game(self):
         return (self.ball_x > 1)
@@ -56,6 +58,7 @@ class Game:
 
             self.velocity_y = self.velocity_y + random.uniform(-.03, .03)
             self.current_reward = 1
+            self.bounces += 1
             return
         self.current_reward = 0
 
@@ -67,6 +70,9 @@ class Game:
 
     def get_current_reward(self):
         return self.current_reward
+
+    def get_num_bounces(self):
+        return self.bounces
 
 if __name__ == "__main__":
     g = Game()
