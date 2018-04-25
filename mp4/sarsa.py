@@ -4,10 +4,10 @@ import random
 #import pong_gui as gui
 
 exploration_count = 20
-C = 20
-gamma = 0.95
+C = 5
+gamma = 0.85
 
-class Q_Learner:
+class Sarsa_Learner:
     def __init__(self, gamma, learning_rate_func, exploration_func):
         # the dictionary for the quality of an action at a specific state - indexed with a tuple (state, action)
         self.q_dict = defaultdict(float)
@@ -40,22 +40,23 @@ class Q_Learner:
                     self.q_dict[(prev_state, act)] = -1
                 return g.get_num_bounces()
 
+            max_f = -2
+            for act in game.Action:
+                f_val = self.exploration_func(self.q_dict[(current_state, act)], self.n_dict[(current_state, act)])
+                if f_val > max_f:
+                    max_f = f_val
+                    current_action = act
+
             if not first_state:
                 self.n_dict[(prev_state, prev_action)] += 1
-                max_q = max([self.q_dict[(current_state, act)] for act in game.Action])
+                max_q = self.q_dict[(current_state, current_action)]
 
                 prev_idx = (prev_state, prev_action)
                 self.q_dict[prev_idx] += self.learning_rate_func(self.n_dict[prev_idx]) * (prev_reward + (self.discount_factor * max_q) - self.q_dict[prev_idx])
 
             prev_state = current_state
 
-            # set prev_action to the action you want to take
-            max_f = -2
-            for act in game.Action:
-                f_val = self.exploration_func(self.q_dict[(current_state, act)], self.n_dict[(current_state, act)])
-                if f_val > max_f:
-                    max_f = f_val
-                    prev_action = act
+            prev_action = current_action
             prev_reward = current_reward
             first_state = False
 
@@ -75,7 +76,7 @@ def example_alpha(n):
 
 if __name__ == "__main__":
     random.seed(18)
-    q = Q_Learner(gamma, example_alpha, f_1)
+    q = Sarsa_Learner(gamma, example_alpha, f_1)
 
     sum = 0
     for i in range(30000):
