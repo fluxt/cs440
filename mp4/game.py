@@ -50,7 +50,7 @@ class Game:
             if (abs(self.velocity_x) < 0.03):
                 self.velocity_x = 0.03 if self.velocity_x > 0 else -0.03
 
-            self.velocity_y = velocity_y + random(-.03, .03)
+            self.velocity_y = self.velocity_y + random(-.03, .03)
             return 1
         return 0
 
