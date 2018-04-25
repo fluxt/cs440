@@ -7,6 +7,7 @@ class Action(Enum):
     DOWN = 0.04
 
 paddle_height = 0.2
+discrete_end_game_state = (-1, -1, -1, -1, -1)
 
 class Game:
     def __init__(self):
@@ -15,6 +16,7 @@ class Game:
         self.velocity_x = 0.03
         self.velocity_y = 0.01
         self.paddle_y = 0.5 - (paddle_height / 2)
+        self.current_reward = 0
 
     def lost_game(self):
         return (self.ball_x > 1)
@@ -22,7 +24,8 @@ class Game:
     # returns the reward for the action taken (-1, 0, or 1)
     def do_frame(self, act):
         if self.lost_game():
-            return -1
+            self.current_reward = -1
+            return
 
         self.paddle_y += act.value
 
@@ -52,14 +55,17 @@ class Game:
                 self.velocity_x = 0.03 if self.velocity_x > 0 else -0.03
 
             self.velocity_y = self.velocity_y + random.uniform(-.03, .03)
-            return 1
-        return 0
+            self.current_reward = 1
+        self.current_reward = 0
 
     def get_state(self):
         return (self.ball_x, self.ball_y, self.velocity_x, self.velocity_y, self.paddle_y)
 
     def get_discrete_state(self):
-        return (-1, -1, -1, -1, -1) if lost_game else (int(self.ball_x * 12), int(self.ball_y * 12), -1 if self.velocity_x < 0 else 1, -1 if self.velocity_y < -0.015 else (1 if self.velocity_y > 0.015 else 0), 11 if paddle_y == 1 - paddle_height else int(12 * paddle_y(1 - paddle_height)))
+        return discrete_end_game_state if self.lost_game() else (int(self.ball_x * 12), int(self.ball_y * 12), -1 if self.velocity_x < 0 else 1, -1 if self.velocity_y < -0.015 else (1 if self.velocity_y > 0.015 else 0), 11 if self.paddle_y == 1 - paddle_height else int(12 * self.paddle_y / (1 - paddle_height)))
+
+    def get_current_reward(self):
+        return self.current_reward
 
 if __name__ == "__main__":
     g = Game()

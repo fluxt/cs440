@@ -1,4 +1,3 @@
-import numpy as np
 import game
 from collections import defaultdict
 import pong_gui as gui
