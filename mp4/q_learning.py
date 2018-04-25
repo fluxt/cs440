@@ -2,7 +2,8 @@ import game
 from collections import defaultdict
 import pong_gui as gui
 
-exploration_count = 2
+exploration_count = 10
+C = 100
 
 def f(u, n):
     if n < exploration_count:
@@ -44,7 +45,7 @@ class Q_Learner:
                 self.n_dict[(prev_state, prev_action)] += 1
                 max_q = max([self.q_dict[(current_state, act)] for act in game.Action])
                 prev_idx = (prev_state, prev_action)
-                self.q_dict[prev_idx] += self.learning_rate_func(self.n_dict[prev_idx]) * (prev_reward + (self.discount_factor * max_q - self.q_dict[prev_idx]))
+                self.q_dict[prev_idx] += self.learning_rate_func(self.n_dict[prev_idx]) * (prev_reward + (self.discount_factor * max_q) - self.q_dict[prev_idx])
 
             prev_state = current_state
 
@@ -61,7 +62,7 @@ class Q_Learner:
             g.do_frame(prev_action)
 
 def example_alpha(n):
-    return 5 / (5 + n)
+    return C / (C + n)
 
 if __name__ == "__main__":
     q = Q_Learner(0.5, example_alpha)
