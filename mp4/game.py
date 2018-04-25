@@ -46,12 +46,12 @@ class Game:
             self.ball_y = - self.velocity_x
         elif (self.ball_x > 1 and self.paddle_y < self.ball_y < self.paddle_y + paddle_height):
             self.ball_x = 2 - self.ball_x
-            self.velocity_x = - self.velocity_x + random.random(-.015, .015)
+            self.velocity_x = - self.velocity_x + random.uniform(-.015, .015)
 
             if (abs(self.velocity_x) < 0.03):
                 self.velocity_x = 0.03 if self.velocity_x > 0 else -0.03
 
-            self.velocity_y = self.velocity_y + random.random(-.03, .03)
+            self.velocity_y = self.velocity_y + random.uniform(-.03, .03)
             return 1
         return 0
 
