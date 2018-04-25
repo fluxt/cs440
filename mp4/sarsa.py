@@ -1,11 +1,18 @@
 import game
 from collections import defaultdict
 import random
+import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 #import pong_gui as gui
 
 exploration_count = 20
 C = 5
 gamma = 0.85
+
+num_training_games = 30000
+num_test_games = 200
 
 class Sarsa_Learner:
     def __init__(self, gamma, learning_rate_func, exploration_func):
@@ -68,25 +75,37 @@ def f_1(u, n):
     else:
         return u
 
-#def f_2(u, n, eps):
-
-
 def example_alpha(n):
     return C / (C + n)
 
 if __name__ == "__main__":
     random.seed(18)
+
     q = Sarsa_Learner(gamma, example_alpha, f_1)
 
     sum = 0
-    for i in range(30000):
+    max_bounces = 0
+    for i in range(num_training_games):
         if (i % 1000 == 0):
-            print("" + str(i) + " : " + str((sum / 1000)))
+            print("" + str(i) + " : avg=" + str(sum / 1000) + " , max=" + str(max_bounces))
             sum = 0
-        sum += q.do_game(False)
+            max_bounces = 0
+        bounces = q.do_game(False)
+        sum += bounces
+        if (bounces > max_bounces):
+            max_bounces = bounces
 
+    bounces_list = np.zeros(num_test_games, dtype=int)
     sum = 0
-    for i in range(200):
-        sum += q.do_game(False)
+    for i in range(num_test_games):
+        val = q.do_game(False)
+        bounces_list[i] = val
+        sum += val
 
-    print(sum / 200)
+    plt.hist(bounces_list, bins = max(bounces_list) - 1)
+    plt.title("SARSA Distribution of bounces for " + str(num_test_games) + " test games")
+    plt.xlabel("Number of bounces")
+    plt.ylabel("Count")
+    plt.savefig("sarsa_hist.png")
+
+    print("Test average: " + str(sum / 200))
