@@ -56,6 +56,7 @@ class Game:
 
             self.velocity_y = self.velocity_y + random.uniform(-.03, .03)
             self.current_reward = 1
+            return
         self.current_reward = 0
 
     def get_state(self):

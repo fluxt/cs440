@@ -2,7 +2,7 @@ import game
 from collections import defaultdict
 import pong_gui as gui
 
-exploration_count = 10
+exploration_count = 5
 C = 100
 
 def f(u, n):
@@ -23,7 +23,7 @@ class Q_Learner:
 
         self.learning_rate_func = learning_rate_func
 
-    def do_game(self):
+    def do_game(self, display):
         g = game.Game()
 
         prev_state = 0
@@ -32,18 +32,23 @@ class Q_Learner:
         prev_reward = 0
 
         while (True):
-            gui.refresh(g, 10)
+            if display:
+                gui.refresh(g, 10)
             current_state = g.get_discrete_state()
             current_reward = g.get_current_reward()
 
             if prev_state == game.discrete_end_game_state:
                 for act in game.Action:
-                    self.q_dict[(prev_state, act)] = prev_reward
+                    self.q_dict[(prev_state, act)] = -1
                 return
 
             if not first_state:
                 self.n_dict[(prev_state, prev_action)] += 1
                 max_q = max([self.q_dict[(current_state, act)] for act in game.Action])
+                #
+                # if (max_q != 0):
+                #     print(max_q)
+
                 prev_idx = (prev_state, prev_action)
                 self.q_dict[prev_idx] += self.learning_rate_func(self.n_dict[prev_idx]) * (prev_reward + (self.discount_factor * max_q) - self.q_dict[prev_idx])
 
@@ -65,7 +70,10 @@ def example_alpha(n):
     return C / (C + n)
 
 if __name__ == "__main__":
-    q = Q_Learner(0.5, example_alpha)
+    q = Q_Learner(0.9, example_alpha)
+
+    for i in range(10000):
+        q.do_game(False)
 
     while True:
-        q.do_game()
+        q.do_game(True)
