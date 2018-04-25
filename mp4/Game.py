@@ -58,7 +58,7 @@ class Game:
         return (self.ball_x, self.ball_y, self.velocity_x, self.velocity_y, self.paddle_y)
 
     def get_discrete_state(self):
-        return (-1, -1, -1, -1, -1) if lost_game else (int(self.ball_x * 12), int(self.ball_y * 12), -1 if self.velocity_x < 0 else 1, -1 if self.velocity_y < -0.015 elif self.velocity_y > 0.015 1 else 0, 11 if paddle_y == 1 - paddle_height else int(12 * paddle_y(1 - paddle_height)))
+        return (-1, -1, -1, -1, -1) if lost_game else (int(self.ball_x * 12), int(self.ball_y * 12), -1 if self.velocity_x < 0 else 1, -1 if self.velocity_y < -0.015 else (1 if self.velocity_y > 0.015 else 0), 11 if paddle_y == 1 - paddle_height else int(12 * paddle_y(1 - paddle_height)))
 
 if __name__ == "__main__":
     g = Game()
