@@ -43,7 +43,7 @@ class Game:
         if (self.ball_x < 0):
             self.ball_x = - self.ball_x
             self.ball_y = - self.velocity_x
-        elif (self.ball_x > 1 and self.paddle_y < self.ball_y < self.paddle_y - paddle_height):
+        elif (self.ball_x > 1 and self.paddle_y < self.ball_y < self.paddle_y + paddle_height):
             self.ball_x = 2 - self.ball_x
             self.velocity_x = - velocity_x + random(-.015, .015)
 
