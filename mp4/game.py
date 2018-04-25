@@ -2,9 +2,9 @@ from enum import Enum
 import random
 
 class Action(Enum):
-    UP = -0.04
-    NOTHING = 0.0
     DOWN = 0.04
+    NOTHING = 0.0
+    UP = -0.04
 
 paddle_height = 0.2
 discrete_end_game_state = (-1, -1, -1, -1, -1)
