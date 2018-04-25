@@ -1,4 +1,5 @@
 from enum import Enum
+import random
 
 class Action(Enum):
     UP = -0.04
