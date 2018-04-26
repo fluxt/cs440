@@ -1,5 +1,6 @@
 from enum import Enum
 import random
+import numpy as np
 
 class Action(Enum):
     DOWN = 0.04
@@ -63,7 +64,7 @@ class Game:
         self.current_reward = 0
 
     def get_state(self):
-        return (self.ball_x, self.ball_y, self.velocity_x, self.velocity_y, self.paddle_y)
+        return np.array([self.ball_x, self.ball_y, self.velocity_x, self.velocity_y, self.paddle_y])
 
     def get_discrete_state(self):
         return discrete_end_game_state if self.lost_game() else (int(self.ball_x * 12), int(self.ball_y * 12), -1 if self.velocity_x < 0 else 1, -1 if self.velocity_y < -0.015 else (1 if self.velocity_y > 0.015 else 0), 11 if self.paddle_y == 1 - paddle_height else int(12 * self.paddle_y / (1 - paddle_height)))
