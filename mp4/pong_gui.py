@@ -50,7 +50,7 @@ def refresh(g, delay):
 if __name__ == "__main__":
     while True:
         g = game.Game()
-        gui_refresh(g, 100)
+        refresh(g, 100)
         while not g.lost_game():
             action = random.choice([game.Action.NOTHING,game.Action.UP,game.Action.DOWN])
             g.do_frame(action)
