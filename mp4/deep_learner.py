@@ -45,8 +45,8 @@ def ReLU_backward(dA, cache):
     return dZ
 
 def cross_entropy(F, y):
-    n = y.shape[0]
-    for i in range()
+
+
 
 def action_to_vector(act):
     if act == game.Action.UP:
