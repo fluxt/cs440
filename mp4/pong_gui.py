@@ -24,17 +24,6 @@ def refresh(g, delay):
             pygame.quit()
             sys.exit()
 
-    # keys = pygame.key.get_pressed()
-    # action = game.Action.NOTHING
-    # if keys[pygame.K_UP] and not keys[pygame.K_DOWN]:
-    #     action = game.Action.UP
-    # elif not keys[pygame.K_UP] and keys[pygame.K_DOWN]:
-    #     action = game.Action.DOWN
-
-    # g.do_frame(action)
-
-    # print(g.get_state())
-
     ballpos = [round(719 * g.ball_x), round(719 * g.ball_y)]
     ballspeed = [round(719 * g.velocity_x), round(719 * g.velocity_y)]
     paddlepos = round(719 * g.paddle_y)
