@@ -51,9 +51,7 @@ def affine_forward(a, w, b):
     z = np.zeros((a_row, w_col)) # n x dp
     for i in range(a_row): # n
         for j in range(w_col): # dp
-            for k in range(a_col): # d
-                z[i][j] += a[i][k] * w[k][j]
-            z[i][j] += b[j]
+            z[i][j] = np.dot(a[i,:] * w[:,j]) + b[j]
     return z
 
 def ReLU(x):
