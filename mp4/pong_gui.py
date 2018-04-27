@@ -16,7 +16,6 @@ screen = pygame.display.set_mode(size)
 ballpos = [0,0]
 ballspeed = [1, 1]
 paddlepos = 0
-paddlespeed = 1
 
 def refresh(g, delay):
     for event in pygame.event.get():
