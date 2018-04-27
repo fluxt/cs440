@@ -60,7 +60,14 @@ def affine_forward(a, w, b):
 def affine_backward(dz, cache):
     pass
 
+def ReLU_forward(z):
+    pass
 
+def ReLU_backward(z):
+    pass
+
+def cross_entrophy(f, y):
+    pass
 
 def ReLU(x):
     return max(x, 0)
