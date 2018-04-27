@@ -5,7 +5,6 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-#import pong_gui as gui
 
 exploration_count = 20
 C = 5
@@ -28,7 +27,17 @@ class Sarsa_Learner:
 
         self.exploration_func = exploration_func
 
-    def do_game(self, display):
+    def get_action(self, state):
+        max_f = -2
+        best = 0
+        for act in game.Action:
+            f_val = self.exploration_func(self.q_dict[(state, act)], self.n_dict[(state, act)])
+            if f_val > max_f:
+                max_f = f_val
+                best = act
+        return best
+
+    def do_game(self):
         g = game.Game()
 
         prev_state = 0
@@ -37,8 +46,6 @@ class Sarsa_Learner:
         prev_reward = 0
 
         while (True):
-            #if display:
-                #gui.refresh(g, 10)
             current_state = g.get_discrete_state()
             current_reward = g.get_current_reward()
 
@@ -47,12 +54,7 @@ class Sarsa_Learner:
                     self.q_dict[(prev_state, act)] = -1
                 return g.get_num_bounces()
 
-            max_f = -2
-            for act in game.Action:
-                f_val = self.exploration_func(self.q_dict[(current_state, act)], self.n_dict[(current_state, act)])
-                if f_val > max_f:
-                    max_f = f_val
-                    current_action = act
+            current_action = self.get_action(current_state)
 
             if not first_state:
                 self.n_dict[(prev_state, prev_action)] += 1
@@ -90,7 +92,7 @@ if __name__ == "__main__":
             print("" + str(i) + " : avg=" + str(sum / 1000) + " , max=" + str(max_bounces))
             sum = 0
             max_bounces = 0
-        bounces = q.do_game(False)
+        bounces = q.do_game()
         sum += bounces
         if (bounces > max_bounces):
             max_bounces = bounces
@@ -98,7 +100,7 @@ if __name__ == "__main__":
     bounces_list = np.zeros(num_test_games, dtype=int)
     sum = 0
     for i in range(num_test_games):
-        val = q.do_game(False)
+        val = q.do_game()
         bounces_list[i] = val
         sum += val
 

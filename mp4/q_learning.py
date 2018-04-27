@@ -5,7 +5,6 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-#import pong_gui as gui
 
 exploration_count = 20
 C = 20
@@ -28,7 +27,17 @@ class Q_Learner:
 
         self.exploration_func = exploration_func
 
-    def do_game(self, display):
+    def get_action(self, state):
+        max_f = -2
+        best = 0
+        for act in game.Action:
+            f_val = self.exploration_func(self.q_dict[(state, act)], self.n_dict[(state, act)])
+            if f_val > max_f:
+                max_f = f_val
+                best = act
+        return best
+
+    def do_game(self):
         g = game.Game()
 
         prev_state = 0
@@ -37,8 +46,6 @@ class Q_Learner:
         prev_reward = 0
 
         while (True):
-            #if display:
-                #gui.refresh(g, 10)
             current_state = g.get_discrete_state()
             current_reward = g.get_current_reward()
 
@@ -55,27 +62,18 @@ class Q_Learner:
                 self.q_dict[prev_idx] += self.learning_rate_func(self.n_dict[prev_idx]) * (prev_reward + (self.discount_factor * max_q) - self.q_dict[prev_idx])
 
             prev_state = current_state
-
-            # set prev_action to the action you want to take
-            max_f = -2
-            for act in game.Action:
-                f_val = self.exploration_func(self.q_dict[(current_state, act)], self.n_dict[(current_state, act)])
-                if f_val > max_f:
-                    max_f = f_val
-                    prev_action = act
+            prev_action = self.get_action(current_state)
             prev_reward = current_reward
             first_state = False
 
             g.do_frame(prev_action)
+
 
 def f_1(u, n):
     if n < exploration_count:
         return float('inf')
     else:
         return u
-
-#def f_2(u, n, eps):
-
 
 def example_alpha(n):
     return C / (C + n)
@@ -91,7 +89,7 @@ if __name__ == "__main__":
             print("" + str(i) + " : avg=" + str(sum / 1000) + " , max=" + str(max_bounces))
             sum = 0
             max_bounces = 0
-        bounces = q.do_game(False)
+        bounces = q.do_game()
         sum += bounces
         if (bounces > max_bounces):
             max_bounces = bounces
@@ -99,7 +97,7 @@ if __name__ == "__main__":
     bounces_list = np.zeros(num_test_games, dtype=int)
     sum = 0
     for i in range(num_test_games):
-        val = q.do_game(False)
+        val = q.do_game()
         bounces_list[i] = val
         sum += val
 
