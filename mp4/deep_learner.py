@@ -37,6 +37,25 @@ class Deep_Learner:
             self.do_minibatch(batch_states, batch_actions)
 
 
+def affine_forward(a, w, b):
+    assert a.ndim == 2 and w.ndim == 2 and b.ndim = 1
+    a_row, a_col = a.shape()
+    w_row, w_col = w.shape()
+    b_num = b.shape()
+    assert a_row > 0 and a_col > 0 and w_row > 0 and w_col > 0 and b_num > 0
+    assert a_col == w_row
+    assert w_col == b_num
+    # n = a_row
+    # d = a_col
+    # dp = w_col
+    z = np.zeros((a_row, w_col)) # n x dp
+    for i in range(a_row): # n
+        for j in range(w_col): # dp
+            for k in range(a_col): # d
+                z[i][j] += a[i][k] * w[k][j]
+            z[i][j] += b[j]
+    return z
+
 def ReLU(x):
     return max(x, 0)
 
