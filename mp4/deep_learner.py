@@ -52,7 +52,15 @@ def affine_forward(a, w, b):
     for i in range(a_row): # n
         for j in range(w_col): # dp
             z[i][j] = np.dot(a[i,:] * w[:,j]) + b[j]
-    return z
+    a_cache = np.copy(a)
+    w_cache = np.copy(w)
+    b_cache = np.copy(b)
+    return z, (a_cache, w_cache, b_cache)
+
+def affine_backward(dz, cache):
+    pass
+
+
 
 def ReLU(x):
     return max(x, 0)
