@@ -13,6 +13,6 @@ def get_data():
         strs = lines[i].split(' ')
         states[i] = np.array([float(n) for n in strs[:-1]])
         act_num = int(float(strs[5]))
-        actions.append(game.Action.UP if act_num == 0 else (game.Action.NOTHING if act_num == 1 else game.Action.DOWN))
+        actions.append(act_num)
 
     return states, actions
