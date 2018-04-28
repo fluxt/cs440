@@ -24,11 +24,11 @@ def affine_backward(dZ, cache):
 
     dW = np.zeros(W.shape)
     for k, j in np.ndindex(dW.shape):
-        dW[k][j] = np.sum(A[:][k] * dZ[:][j])
+        dW[k][j] = np.sum(A[:,k] * dZ[:,j])
 
     db = np.zeros(b.shape)
     for j in range(db.shape[0]):
-        db[j] = np.sum(dZ[:][j])
+        db[j] = np.sum(dZ[:,j])
     return dA, dW, db
 
 
@@ -42,7 +42,7 @@ def ReLU_forward(Z):
 def ReLU_backward(dA, cache):
     Z = cache
     dZ = dA.copy()
-    dZ[Z==0] = 0
+    dZ[Z < 0] = 0
     return dZ
 
 def cross_entropy(F, y):
@@ -92,11 +92,21 @@ class Deep_Learner:
         return affine_forward(Z, self.W_out, self.b_out)[0]
 
     def get_action(self, state):
-        return vector_to_action(self.get_output(state))
+        return action_num_to_action(np.argmax(self.get_output(state)))
 
+    # X = batch_states, y=batch_actions
     def do_minibatch(self, batch_states, batch_actions):
+        acache = [0 for n in range(self.layers + 1)]
+        rcache = [0 for n in range(self.layers)]
+        Z, acache[0] = affine_forward(batch_states, self.W_in, self.b[0])
+        A, rcache[0] = ReLU_forward(Z)
 
+        for layer_num in range(1, self.layers):
+            Z, acache[layer_num] = affine_forward(A, self.W[layer_num-1], self.b[layer_num])
+            A, rcache[layer_num] = ReLU_forward(Z)
+        F, acache[self.layers] = affine_forward(A, self.W_out, self.b_out)
 
+        loss, dF = cross_entropy(F, batch_actions)
 
     def do_epoch(self):
         order = np.arange(len(self.train_states))
