@@ -1,7 +1,7 @@
 import game
 import numpy as np
 
-data_file = "expert_policy.txt"
+data_file = "data/expert_policy.txt"
 
 def get_data():
     lines = open(data_file).readlines()

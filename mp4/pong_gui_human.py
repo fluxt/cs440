@@ -36,7 +36,7 @@ class PongGUIHuman():
         pygame.draw.line(self.screen, blue, (ballpos[0], ballpos[1]), (ballpos[0]+ballspeed[0], ballpos[1]+ballspeed[1]))
 
         pygame.display.flip()
-        # pygame.image.save(self.screen, "animations/"+str(self.i)+".png")
+        # pygame.image.save(self.screen, "animation/"+str(self.i)+".png")
         # self.i += 1
         pygame.time.delay(delay)
 
