@@ -1,4 +1,5 @@
 import game
+import math
 
 def get_action(state):
     ball_x, ball_y, vel_x, vel_y, pad_y = state
@@ -16,6 +17,13 @@ def get_action(state):
     else:
         return game.Action.NOTHING
 
+def get_action2(state):
+    ball_x, ball_y, vel_x, vel_y, pad_y = state
+    if vel_x < 0:
+        ticks_rebound = math.ceil(1 + ball_x/abs(vel_x))
+    else:
+        ticks_rebound = math.ceil(1 - ball_x/abs(vel_x))
+    
 if __name__ == "__main__":
     num_games = 1000
     sum = 0
