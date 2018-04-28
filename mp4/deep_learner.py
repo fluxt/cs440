@@ -10,9 +10,12 @@ batch_size = 100
 num_layers = 3
 num_nodes_per_layer = 256
 
-# also returns (A, W, b) for caching
 def affine_forward(A, W, b):
-    return ((A.dot(W)) + b), (A.copy(), W.copy())
+    return (A.dot(W)) + b
+
+# also returns (A, W, b) for caching
+def affine_forward_cache(A, W, b):
+    return affine_forward(A, W, b), (A.copy(), W.copy())
 
 # (A, W) passed in as 'cache'
 # returns dA, dW, db
@@ -23,11 +26,14 @@ def affine_backward(dZ, cache):
     db = np.sum(dZ, axis=0)
     return dA, dW, db
 
+def ReLU_forward(Z):
+    Z[Z < 0] = 0
+    return Z
 
 # also returns Z for caching
-def ReLU_forward(Z):
+def ReLU_forward_cache(Z):
     cache = Z.copy()
-    Z[Z < 0] = 0
+    Z = ReLU_forward(Z)
     return Z, cache
 
 # Z passed in as 'cache'
@@ -94,9 +100,9 @@ class Deep_Learner:
         A = batch_states
 
         for layer_num in range(self.layers):
-            Z, acache[layer_num] = affine_forward(A, self.W[layer_num], self.b[layer_num])
-            A, rcache[layer_num] = ReLU_forward(Z)
-        F, acache[self.layers] = affine_forward(A, self.W[self.layers], self.b[self.layers])
+            Z, acache[layer_num] = affine_forward_cache(A, self.W[layer_num], self.b[layer_num])
+            A, rcache[layer_num] = ReLU_forward_cache(Z)
+        F, acache[self.layers] = affine_forward_cache(A, self.W[self.layers], self.b[self.layers])
 
         loss, dF = cross_entropy(F, batch_actions)
 
@@ -119,9 +125,9 @@ class Deep_Learner:
         inputs = self.normalize(inputs)
         A = inputs
         for layer_num in range(self.layers):
-            Z, _ = affine_forward(A, self.W[layer_num], self.b[layer_num])
-            A, _ = ReLU_forward(Z)
-        F, _ = affine_forward(A, self.W[self.layers], self.b[self.layers])
+            Z = affine_forward(A, self.W[layer_num], self.b[layer_num])
+            A = ReLU_forward(Z)
+        F = affine_forward(A, self.W[self.layers], self.b[self.layers])
         return F
 
     def get_action_num(self, state):
