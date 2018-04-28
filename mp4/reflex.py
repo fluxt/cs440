@@ -2,12 +2,16 @@ import game
 import math
 
 def get_action(state):
-    ball_x, ball_y, vel_x, vel_y, pad_y = state
-    x_dist = 1 + ball_x if vel_x < 0 else 1 - ball_x
+    x_pos, y_pos, vel_x, vel_y, pad_y = state
+    x_dist = 1 + x_pos if vel_x < 0 else 1 - x_pos
     y_dist = x_dist * vel_y / abs(vel_x)
-    y_goal = (y_dist + ball_y)
+    y_goal = (y_dist + y_pos)
 
-    
+    while y_goal < 0 or y_goal > 1:
+        if (y_goal < 0):
+            y_goal *= -1
+        else:
+            y_goal = 2 - y_goal
 
     pad_center = pad_y + (game.paddle_height / 2)
     if (y_goal > pad_center):
@@ -23,9 +27,9 @@ def get_action2(state):
         ticks_rebound = math.ceil(1 + ball_x/abs(vel_x))
     else:
         ticks_rebound = math.ceil(1 - ball_x/abs(vel_x))
-    
+
 if __name__ == "__main__":
-    num_games = 1000
+    num_games = 200
     sum = 0
     for i in range(num_games):
         g = game.Game()
