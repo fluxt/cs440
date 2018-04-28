@@ -5,10 +5,10 @@ import numpy as np
 learning_epochs = 5
 
 weight_scale = 0.02
-learning_rate = 0.3
+learning_rate = .5
 batch_size = 300
-num_layers = 3
-num_nodes_per_layer = 20
+num_layers = 2
+num_nodes_per_layer = 100
 
 # also returns (A, W, b) for caching
 def affine_forward(A, W, b):
@@ -129,8 +129,8 @@ class Deep_Learner:
         self.b[0] -= learning_rate * db[0]
         self.b_out -= learning_rate * db[self.layers]
 
-        for i in range(1, self.layers - 1):
-            self.W[i] -= learning_rate * dW[i]
+        for i in range(1, self.layers):
+            self.W[i-1] -= learning_rate * dW[i]
             self.b[i] -= learning_rate * db[i]
         return loss
 
@@ -158,10 +158,19 @@ if __name__ == "__main__":
     states, actions = utils.get_data()
     learner = Deep_Learner(states, actions, num_layers, num_nodes_per_layer)
 
+    correct = 0
+    for i in range(len(actions)):
+        if learner.get_action_num(states[i]) == actions[i]:
+            correct += 1
+    print(correct)
+    print(len(actions))
+
     for i in range(learning_epochs):
         print(learner.do_epoch())
 
     correct = 0
     for i in range(len(actions)):
-        if learner.get_action_num(states[i]) != actions[i]:
-            print("hello")
+        if learner.get_action_num(states[i]) == actions[i]:
+            correct += 1
+    print(correct)
+    print(len(actions))
