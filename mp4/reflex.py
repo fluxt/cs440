@@ -20,16 +20,34 @@ def get_action(state):
 def get_action2(state):
     ball_x, ball_y, vel_x, vel_y, pad_y = state
     if vel_x < 0:
-        ticks_rebound = math.ceil(1 + ball_x/abs(vel_x))
+        ticks_rebound = math.ceil((1 + ball_x)/abs(vel_x))
     else:
-        ticks_rebound = math.ceil(1 - ball_x/abs(vel_x))
-    
+        ticks_rebound = math.ceil((1 - ball_x)/abs(vel_x))
+
+    future_y = ball_y
+    future_vel = vel_y
+    for i in range(ticks_rebound):
+        future_y += future_vel
+        if (future_y < 0):
+            future_y = -future_y
+            future_vel = -future_vel
+        elif (ball_y > 1):
+            future_y = 2 - future_y
+            future_vel = -future_vel
+
+    if (future_y > pad_y+game.paddle_height):
+        return game.Action.DOWN
+    elif (future_y < pad_y):
+        return game.Action.UP
+    else:
+        return game.Action.NOTHING
+
 if __name__ == "__main__":
     num_games = 1000
     sum = 0
     for i in range(num_games):
         g = game.Game()
         while not g.lost_game():
-            g.do_frame(get_action(g.get_state()))
+            g.do_frame(get_action2(g.get_state()))
         sum += g.get_num_bounces()
     print(sum / num_games)
