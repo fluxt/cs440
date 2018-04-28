@@ -2,7 +2,9 @@ import sys
 import pygame
 import game
 import random
-import q_learning
+# import q_learning
+import utils
+import deep_learner
 
 size = width, height = [750, 720]
 black = [0, 0, 0]
@@ -40,12 +42,25 @@ if __name__ == "__main__":
     gamma = 0.95
     training_games = 30000
 
-    print("training...")
-    agent = q_learning.Q_Learner(gamma, q_learning.example_alpha, q_learning.f_1)
-    for i in range(training_games):
-        if (i % 1000 == 0): print("i: "+str(i))
-        agent.do_game()
-    print("finished training!")
+    # print("training...")
+    # agent = q_learning.Q_Learner(gamma, q_learning.example_alpha, q_learning.f_1)
+    # for i in range(training_games):
+    #     if (i % 1000 == 0): print("i: "+str(i))
+    #     agent.do_game()
+    # print("finished training!")
+
+    learning_epochs = 500
+    weight_scale = 0.01
+    learning_rate = .1
+    batch_size = 100
+    num_layers = 3
+    num_nodes_per_layer = 256
+
+    states, actions = utils.get_data()
+    learner = deep_learner.Deep_Learner(states, actions, num_layers, num_nodes_per_layer)
+
+    for i in range(learning_epochs):
+        print("i: "+str(i)+" loss: "+str(learner.do_epoch()))
 
     pg = PongGUI()
     pg.init()
@@ -54,6 +69,7 @@ if __name__ == "__main__":
         g = game.Game()
         pg.refresh(g, 50)
         while not g.lost_game():
-            action = agent.get_action(g.get_discrete_state())
+            # action = agent.get_action(g.get_discrete_state())
+            action = learner.get_action(g.get_state())
             g.do_frame(action)
             pg.refresh(g, 50)
