@@ -4,11 +4,11 @@ import numpy as np
 
 learning_epochs = 5
 
-weight_scale = 0.01
-learning_rate = .1
+weight_scale = 0.15
+learning_rate = .5
 batch_size = 1000
-num_layers = 3
-num_nodes_per_layer = 256
+num_layers = 2
+num_nodes_per_layer = 30
 
 # also returns (A, W, b) for caching
 def affine_forward(A, W, b):
@@ -18,17 +18,9 @@ def affine_forward(A, W, b):
 # returns dA, dW, db
 def affine_backward(dZ, cache):
     A, W, b = cache
-    dA = np.zeros(A.shape)
-    for i, k in np.ndindex(dA.shape):
-        dA[i][k] = np.sum(dZ[i] * W[k])
-
-    dW = np.zeros(W.shape)
-    for k, j in np.ndindex(dW.shape):
-        dW[k][j] = np.sum(A[:,k] * dZ[:,j])
-
-    db = np.zeros(b.shape)
-    for j in range(db.shape[0]):
-        db[j] = np.sum(dZ[:,j])
+    dA = dZ.dot(W.T)
+    dW = (A.T).dot(dZ)
+    db = np.sum(dZ, axis=0)
     return dA, dW, db
 
 
