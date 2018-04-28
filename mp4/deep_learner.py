@@ -5,8 +5,8 @@ import numpy as np
 learning_epochs = 500
 
 weight_scale = 0.01
-learning_rate = .2
-batch_size = 1000
+learning_rate = .1
+batch_size = 100
 num_layers = 3
 num_nodes_per_layer = 256
 
@@ -66,42 +66,33 @@ class Deep_Learner:
     # layers is the number of inner layers
     def __init__(self, training_states, training_actions, layers, nodes_per_layer):
         self.train_states = training_states
-        self.train_outputs = np.zeros((len(training_actions), 3))
         self.train_actions = training_actions
 
+        #self.means =
+
         self.layers = layers
-        self.W = np.random.uniform(0, weight_scale, size=(layers-1, nodes_per_layer, nodes_per_layer))
-        self.W_in = np.random.uniform(0, weight_scale, size=(5, nodes_per_layer))
-        self.W_out = np.random.uniform(0, weight_scale, size=(nodes_per_layer, 3))
-        self.b = np.zeros((layers, nodes_per_layer))
-        self.b_out = np.zeros(3)
+        self.W = [0 for i in range(layers + 1)]
+        self.W[0] = np.random.uniform(0, weight_scale, size=(5, nodes_per_layer))
+        for i in range(1, layers):
+            self.W[i] = np.random.uniform(0, weight_scale, size=(nodes_per_layer, nodes_per_layer))
+        self.W[layers] = np.random.uniform(0, weight_scale, size=(nodes_per_layer, 3))
 
-    def get_output(self, inputs):
-        Z, _ = affine_forward(inputs, self.W_in, self.b[0])
-        Z, _ = ReLU_forward(Z)
-        for n in range(self.layers - 1):
-            Z, _ = affine_forward(Z, self.W[n], self.b[n+1])
-            Z, _ = ReLU_forward(Z)
-        return affine_forward(Z, self.W_out, self.b_out)[0]
-
-    def get_action_num(self, state):
-        return np.argmax(self.get_output(state))
-
-    def get_action(self, state):
-        return action_num_to_action(self.get_action_num(state))
+        self.b = [0 for i in range(layers + 1)]
+        for i in range(layers):
+            self.b[i] = np.zeros(nodes_per_layer)
+        self.b[layers] = np.zeros(3)
 
     # X = batch_states, y=batch_actions
     def do_minibatch(self, batch_states, batch_actions):
         # forward propogation
         acache = [0 for n in range(self.layers + 1)]
         rcache = [0 for n in range(self.layers)]
-        Z, acache[0] = affine_forward(batch_states, self.W_in, self.b[0])
-        A, rcache[0] = ReLU_forward(Z)
+        A = batch_states
 
-        for layer_num in range(1, self.layers):
-            Z, acache[layer_num] = affine_forward(A, self.W[layer_num-1], self.b[layer_num])
+        for layer_num in range(self.layers):
+            Z, acache[layer_num] = affine_forward(A, self.W[layer_num], self.b[layer_num])
             A, rcache[layer_num] = ReLU_forward(Z)
-        F, acache[self.layers] = affine_forward(A, self.W_out, self.b_out)
+        F, acache[self.layers] = affine_forward(A, self.W[self.layers], self.b[self.layers])
 
         loss, dF = cross_entropy(F, batch_actions)
 
@@ -115,30 +106,33 @@ class Deep_Learner:
             dA, dW[layer_num], db[layer_num] = affine_backward(dZ, acache[layer_num])
 
         # gradient descent
-        self.W_in -= learning_rate * dW[0]
-        self.W_out -= learning_rate * dW[self.layers]
-        self.b[0] -= learning_rate * db[0]
-        self.b_out -= learning_rate * db[self.layers]
-
-        for i in range(1, self.layers):
-            self.W[i-1] -= learning_rate * dW[i]
+        for i in range(self.layers + 1):
+            self.W[i] -= learning_rate * dW[i]
             self.b[i] -= learning_rate * db[i]
         return loss
 
-    def do_epoch(self):
-        order = np.arange(len(self.train_states))
-        np.random.shuffle(order)
+    def get_output(self, inputs):
+        A = inputs
+        for layer_num in range(self.layers):
+            Z, _ = affine_forward(A, self.W[layer_num], self.b[layer_num])
+            A, _ = ReLU_forward(Z)
+        F, _ = affine_forward(A, self.W[self.layers], self.b[self.layers])
+        return F
 
+    def get_action_num(self, state):
+        return np.argmax(self.get_output(state))
+
+    def get_action(self, state):
+        return action_num_to_action(self.get_action_num(state))
+
+    def do_epoch(self):
+        order = np.arange(len(self.train_actions))
+        np.random.shuffle(order)
         total_loss = 0
 
-        for batch_num in range(len(self.train_states) // batch_size):
-            batch_states = []
-            batch_actions = []
-            for i in range(batch_num * batch_size, min(len(self.train_states), ((batch_num+1) * batch_size) - 1)):
-                batch_states.append(self.train_states[order[i]])
-                batch_actions.append(self.train_actions[order[i]])
-            batch_states = np.array(batch_states)
-            batch_actions = np.array(batch_actions)
+        for batch_num in range(len(self.train_actions) // batch_size):
+            batch_states = np.array([self.train_states[order[i]] for i in range(batch_num * batch_size, min(len(self.train_actions), ((batch_num+1) * batch_size) - 1))])
+            batch_actions = np.array([self.train_actions[order[i]] for i in range(batch_num * batch_size, min(len(self.train_actions), ((batch_num+1) * batch_size) - 1))])
 
             total_loss += self.do_minibatch(batch_states, batch_actions)
         return total_loss
