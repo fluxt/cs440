@@ -29,6 +29,7 @@ def affine_backward(dZ, cache):
     db = np.zeros(b.shape)
     for j in range(db.shape[0]):
         db[j] = np.sum(dZ[:][j])
+    return dA, dW, db
 
 
 # also returns Z for caching
@@ -94,8 +95,6 @@ class Deep_Learner:
         return vector_to_action(self.get_output(state))
 
     def do_minibatch(self, batch_states, batch_actions):
-        acaches = [0 for n in range(self.layers + 2)]
-        rcaches = [0 for n in range(self.layers + 1)]
 
 
 
