@@ -12,12 +12,12 @@ num_nodes_per_layer = 256
 
 # also returns (A, W, b) for caching
 def affine_forward(A, W, b):
-    return ((A.dot(W)) + b), (A.copy(), W.copy(), b.copy())
+    return ((A.dot(W)) + b), (A.copy(), W.copy())
 
-# (A, W, b) passed in as 'cache'
+# (A, W) passed in as 'cache'
 # returns dA, dW, db
 def affine_backward(dZ, cache):
-    A, W, b = cache
+    A, W = cache
     dA = dZ.dot(W.T)
     dW = (A.T).dot(dZ)
     db = np.sum(dZ, axis=0)
@@ -54,11 +54,11 @@ def cross_entropy(F, y):
 
 def action_num_to_action(act):
     if act == 0:
-        return game.Action.DOWN
+        return game.Action.UP
     elif act == 1:
         return game.Action.NOTHING
     elif act == 2:
-        return game.Action.UP
+        return game.Action.DOWN
     else:
         print("SOMETHING IS WRONG!!!")
 
@@ -159,7 +159,7 @@ if __name__ == "__main__":
     print(len(actions))
 
     for i in range(learning_epochs):
-        print(learner.do_epoch())
+        print("i = " + str(i) + ", loss = " + str(learner.do_epoch()))
 
     correct = 0
     for i in range(len(actions)):
