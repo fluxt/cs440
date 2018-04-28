@@ -23,29 +23,29 @@ def get_action(state):
 
 def get_action2(state):
     ball_x, ball_y, vel_x, vel_y, pad_y = state
-    if vel_x < 0:
-        ticks_rebound = math.ceil((1 + ball_x)/abs(vel_x))
-    else:
-        ticks_rebound = math.ceil((1 - ball_x)/abs(vel_x))
 
-    future_y = ball_y
-    future_vel = vel_y
-    for i in range(ticks_rebound):
-        future_y += future_vel
-        if (future_y < 0):
-            future_y = -future_y
-            future_vel = -future_vel
-        elif (ball_y > 1):
-            future_y = 2 - future_y
-            future_vel = -future_vel
 
-    if (future_y > pad_y+game.paddle_height):
+    while ball_x <= 1:
+        ball_x += vel_x
+        ball_y += vel_y
+
+        if ball_y < 0:
+            ball_y = -ball_y
+            vel_y = -vel_y
+        elif ball_y > 1:
+            ball_y = 2 - ball_y
+            vel_y = -vel_y
+        
+        if ball_x < 0:
+            ball_x = -ball_x
+            vel_x = -vel_x
+
+    if (ball_y > pad_y+game.paddle_height):
         return game.Action.DOWN
-    elif (future_y < pad_y):
+    elif (ball_y < pad_y):
         return game.Action.UP
     else:
         return game.Action.NOTHING
-        ticks_rebound = math.ceil(1 - ball_x/abs(vel_x))
 
 if __name__ == "__main__":
     num_games = 200
