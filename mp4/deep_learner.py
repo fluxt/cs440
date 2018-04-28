@@ -4,7 +4,7 @@ import numpy as np
 
 learning_epochs = 1
 
-weight_scale = 0.1
+weight_scale = 0.02
 learning_rate = 0.1
 batch_size = 100
 num_layers = 4
@@ -45,21 +45,25 @@ def ReLU_backward(dA, cache):
     return dZ
 
 def cross_entropy(F, y):
+    n = y.shape[0]
+    L = 0
+    dF = np.zeros(F.shape)
+    for i in range(n):
+        sum_exp_thing = np.sum(np.exp(F[i]))
+        L += F[i][y[i]] - np.log(sum_exp_thing)
 
+        expected = np.zeros(3)
+        expected[y[i]] = 1
+        dF[i] = expected - (np.exp(F[i]) / sum_exp_thing)
+    L *= (-1 / n)
+    dF *= (-1 / n)
 
+    return L, dF
 
-def action_to_vector(act):
-    if act == game.Action.UP:
-        return np.array([1, 0, 0])
-    elif act == game.Action.NOTHING:
-        return np.array([0, 1, 0])
-    else:
-        return np.array([0, 0, 1])
-
-def vector_to_action(vec):
-    if vec[0] > vec[1] and vec[0] > vec[2]:
+def action_num_to_action(act):
+    if act == 0:
         return game.Action.UP
-    elif vec[1] > vec[0] and vec[1] > vec[2]:
+    elif act == 1:
         return game.Action.NOTHING
     else:
         return game.Action.DOWN
@@ -69,8 +73,7 @@ class Deep_Learner:
     def __init__(self, training_states, training_actions, layers, nodes_per_layer):
         self.train_states = training_states
         self.train_outputs = np.zeros((len(training_actions), 3))
-        for i in range(len(training_actions)):
-            self.train_outputs[i] = action_to_vector(training_actions[i])
+        self.train_actions = training_actions
 
         self.layers = layers
         self.W = np.random.uniform(0, weight_scale, size=(layers-1, nodes_per_layer, nodes_per_layer))
@@ -102,14 +105,14 @@ class Deep_Learner:
 
         for batch_num in range(len(self.train_states) // batch_size):
             batch_states = []
-            batch_outputs = []
+            batch_actions = []
             for i in range(batch_num * batch_size, min(len(self.train_states), ((batch_num+1) * batch_size) - 1)):
                 batch_states.append(self.train_states[order[i]])
-                batch_outputs.append(self.train_outputs[order[i]])
+                batch_actions.append(self.train_actions[order[i]])
             batch_states = np.array(batch_states)
-            batch_outputs = np.array(batch_outputs)
+            batch_actions = np.array(batch_actions)
 
-            self.do_minibatch(batch_states, batch_outputs)
+            self.do_minibatch(batch_states, batch_actions)
 
 if __name__ == "__main__":
     np.random.seed(24)
