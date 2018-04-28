@@ -2,13 +2,13 @@ import utils
 import game
 import numpy as np
 
-learning_epochs = 1
+learning_epochs = 10
 
 weight_scale = 0.02
-learning_rate = 0.1
-batch_size = 100
-num_layers = 4
-num_nodes_per_layer = 100
+learning_rate = 0.3
+batch_size = 300
+num_layers = 3
+num_nodes_per_layer = 20
 
 # also returns (A, W, b) for caching
 def affine_forward(A, W, b):
@@ -96,6 +96,7 @@ class Deep_Learner:
 
     # X = batch_states, y=batch_actions
     def do_minibatch(self, batch_states, batch_actions):
+        # forward propogation
         acache = [0 for n in range(self.layers + 1)]
         rcache = [0 for n in range(self.layers)]
         Z, acache[0] = affine_forward(batch_states, self.W_in, self.b[0])
@@ -108,9 +109,31 @@ class Deep_Learner:
 
         loss, dF = cross_entropy(F, batch_actions)
 
+        # back-propogation
+        dW = [0 for n in range(self.layers + 1)]
+        db = [0 for n in range(self.layers + 1)]
+
+        dA, dW[self.layers], db[self.layers] = affine_backward(dF, acache[self.layers])
+        for layer_num in range(self.layers - 1, -1, -1):
+            dZ = ReLU_backward(dA, rcache[layer_num])
+            dA, dW[layer_num], db[layer_num] = affine_backward(dZ, acache[layer_num])
+
+        # gradient descent
+        self.W_in -= learning_rate * dW[0]
+        self.W_out -= learning_rate * dW[self.layers]
+        self.b[0] -= learning_rate * db[0]
+        self.b_out -= learning_rate * db[self.layers]
+
+        for i in range(1, self.layers - 1):
+            self.W[i] -= learning_rate * dW[i]
+            self.b[i] -= learning_rate * db[i]
+        return loss
+
     def do_epoch(self):
         order = np.arange(len(self.train_states))
         np.random.shuffle(order)
+
+        total_loss = 0
 
         for batch_num in range(len(self.train_states) // batch_size):
             batch_states = []
@@ -121,16 +144,14 @@ class Deep_Learner:
             batch_states = np.array(batch_states)
             batch_actions = np.array(batch_actions)
 
-            self.do_minibatch(batch_states, batch_actions)
+            total_loss += self.do_minibatch(batch_states, batch_actions)
+        return total_loss
 
 if __name__ == "__main__":
     np.random.seed(24)
 
     states, actions = utils.get_data()
-    learner = Deep_Learner(states, actions, 4, 256)
-
-    out = learner.get_output(states[0:10])
-    print(out)
+    learner = Deep_Learner(states, actions, num_layers, num_nodes_per_layer)
 
     for i in range(learning_epochs):
-        learner.do_epoch()
+        print(learner.do_epoch())
