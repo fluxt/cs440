@@ -2,7 +2,7 @@ import utils
 import game
 import numpy as np
 
-learning_epochs = 10
+learning_epochs = 5
 
 weight_scale = 0.02
 learning_rate = 0.3
@@ -63,11 +63,13 @@ def cross_entropy(F, y):
 
 def action_num_to_action(act):
     if act == 0:
-        return game.Action.UP
+        return game.Action.DOWN
     elif act == 1:
         return game.Action.NOTHING
+    elif act == 2:
+        return game.Action.UP
     else:
-        return game.Action.DOWN
+        print("SOMETHING IS WRONG!!!")
 
 class Deep_Learner:
     # layers is the number of inner layers
@@ -91,8 +93,11 @@ class Deep_Learner:
             Z, _ = ReLU_forward(Z)
         return affine_forward(Z, self.W_out, self.b_out)[0]
 
+    def get_action_num(self, state):
+        return np.argmax(self.get_output(state))
+
     def get_action(self, state):
-        return action_num_to_action(np.argmax(self.get_output(state)))
+        return action_num_to_action(self.get_action_num(state))
 
     # X = batch_states, y=batch_actions
     def do_minibatch(self, batch_states, batch_actions):
@@ -155,3 +160,8 @@ if __name__ == "__main__":
 
     for i in range(learning_epochs):
         print(learner.do_epoch())
+
+    correct = 0
+    for i in range(len(actions)):
+        if learner.get_action_num(states[i]) != actions[i]:
+            print("hello")
