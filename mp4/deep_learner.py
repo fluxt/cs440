@@ -63,12 +63,16 @@ def action_num_to_action(act):
         print("SOMETHING IS WRONG!!!")
 
 class Deep_Learner:
+    def normalize(self, states):
+        return (states - self.means) / self.std_deviations
+
     # layers is the number of inner layers
     def __init__(self, training_states, training_actions, layers, nodes_per_layer):
-        self.train_states = training_states
-        self.train_actions = training_actions
+        self.means = np.mean(training_states, axis=0)
+        self.std_deviations = np.std(training_states, axis=0)
 
-        #self.means =
+        self.train_states = self.normalize(training_states)
+        self.train_actions = training_actions
 
         self.layers = layers
         self.W = [0 for i in range(layers + 1)]
@@ -112,6 +116,7 @@ class Deep_Learner:
         return loss
 
     def get_output(self, inputs):
+        inputs = self.normalize(inputs)
         A = inputs
         for layer_num in range(self.layers):
             Z, _ = affine_forward(A, self.W[layer_num], self.b[layer_num])
