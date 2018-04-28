@@ -2,13 +2,13 @@ import utils
 import game
 import numpy as np
 
-learning_epochs = 5
+learning_epochs = 500
 
-weight_scale = 0.15
-learning_rate = .5
+weight_scale = 0.01
+learning_rate = .2
 batch_size = 1000
-num_layers = 2
-num_nodes_per_layer = 30
+num_layers = 3
+num_nodes_per_layer = 256
 
 # also returns (A, W, b) for caching
 def affine_forward(A, W, b):
@@ -26,16 +26,15 @@ def affine_backward(dZ, cache):
 
 # also returns Z for caching
 def ReLU_forward(Z):
-    ret = Z.copy()
-    ret[ret < 0] = 0
-    return ret, Z.copy()
+    cache = Z.copy()
+    Z[Z < 0] = 0
+    return Z, cache
 
 # Z passed in as 'cache'
 def ReLU_backward(dA, cache):
     Z = cache
-    dZ = dA.copy()
-    dZ[Z < 0] = 0
-    return dZ
+    dA[Z < 0] = 0
+    return dA
 
 def cross_entropy(F, y):
     n = y.shape[0]
