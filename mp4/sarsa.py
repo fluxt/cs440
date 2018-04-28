@@ -108,6 +108,6 @@ if __name__ == "__main__":
     plt.title("SARSA Distribution of bounces for " + str(num_test_games) + " test games")
     plt.xlabel("Number of bounces")
     plt.ylabel("Count")
-    plt.savefig("sarsa_hist.png")
+    plt.savefig("image/sarsa_hist.png")
 
     print("Test average: " + str(sum / 200))
