@@ -4,15 +4,15 @@ import numpy as np
 
 learning_epochs = 5
 
-weight_scale = 0.02
-learning_rate = .5
-batch_size = 300
-num_layers = 2
-num_nodes_per_layer = 100
+weight_scale = 0.01
+learning_rate = .1
+batch_size = 1000
+num_layers = 3
+num_nodes_per_layer = 256
 
 # also returns (A, W, b) for caching
 def affine_forward(A, W, b):
-    return ((A.dot(W)) + b), (A, W, b)
+    return ((A.dot(W)) + b), (A.copy(), W.copy(), b.copy())
 
 # (A, W, b) passed in as 'cache'
 # returns dA, dW, db
@@ -36,7 +36,7 @@ def affine_backward(dZ, cache):
 def ReLU_forward(Z):
     ret = Z.copy()
     ret[ret < 0] = 0
-    return ret, Z
+    return ret, Z.copy()
 
 # Z passed in as 'cache'
 def ReLU_backward(dA, cache):
@@ -153,10 +153,13 @@ class Deep_Learner:
         return total_loss
 
 if __name__ == "__main__":
-    np.random.seed(24)
+    #np.random.seed(24)
 
     states, actions = utils.get_data()
     learner = Deep_Learner(states, actions, num_layers, num_nodes_per_layer)
+
+    out = learner.get_output(states[0:10])
+    print(out)
 
     correct = 0
     for i in range(len(actions)):
@@ -174,3 +177,6 @@ if __name__ == "__main__":
             correct += 1
     print(correct)
     print(len(actions))
+
+    out = learner.get_output(states[0:10])
+    print(out)
