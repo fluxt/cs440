@@ -85,7 +85,7 @@ if __name__ == "__main__":
     random.seed(18)
     q = Q_Learner(gamma, alpha, f)
 
-    plot_smoothing_size = 100
+    plot_smoothing_size = 300
     bounces_arr = np.zeros(num_training_games // plot_smoothing_size)
     sum = 0
     for i in range(num_training_games):

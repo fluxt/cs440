@@ -5,7 +5,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-learning_epochs = 1000
+learning_epochs = 500
 
 weight_scale = 0.01
 learning_rate = .1
@@ -103,6 +103,7 @@ class Deep_Learner:
 
     # train the network on a batch of inputs
     # X = batch_states, y=batch_actions
+    # returns the loss and the number of inputs that were correctly classified
     def do_minibatch(self, batch_states, batch_actions):
         # forward propogation
         acache = [0 for n in range(self.layers + 1)]
@@ -114,6 +115,7 @@ class Deep_Learner:
             A, rcache[layer_num] = ReLU_forward_cache(Z)
         F, acache[self.layers] = affine_forward_cache(A, self.W[self.layers], self.b[self.layers])
 
+        num_correct = np.sum(np.argmax(F, axis=1) == batch_actions)
         loss, dF = cross_entropy(F, batch_actions)
 
         # back-propogation
@@ -129,17 +131,25 @@ class Deep_Learner:
         for i in range(self.layers + 1):
             self.W[i] -= learning_rate * dW[i]
             self.b[i] -= learning_rate * db[i]
-        return loss
+        return loss, num_correct
 
     # get the network's output vector for a given input
-    def get_action_num(self, inputs):
+    def get_output(self, inputs):
         inputs = self.normalize(inputs)
         A = inputs
         for layer_num in range(self.layers):
             Z = affine_forward(A, self.W[layer_num], self.b[layer_num])
             A = ReLU_forward(Z)
         F = affine_forward(A, self.W[self.layers], self.b[self.layers])
-        return np.argmax(F)
+        return F
+
+    # for a matrix of multiple inputs
+    def get_action_nums(self, inputs):
+        return np.argmax(self.get_output(inputs), axis=1)
+
+    # for just one input vector
+    def get_action_num(self, input):
+        return np.argmax(self.get_output(input))
 
     def get_action(self, state):
         return action_num_to_action(self.get_action_num(state))
@@ -151,13 +161,16 @@ class Deep_Learner:
         order = np.arange(len(self.train_actions))
         np.random.shuffle(order)
         total_loss = 0
+        total_correct = 0
 
         for batch_num in range(len(self.train_actions) // batch_size):
             batch_states = np.array([self.train_states[order[i]] for i in range(batch_num * batch_size, min(len(self.train_actions), ((batch_num+1) * batch_size) - 1))])
             batch_actions = np.array([self.train_actions[order[i]] for i in range(batch_num * batch_size, min(len(self.train_actions), ((batch_num+1) * batch_size) - 1))])
 
-            total_loss += self.do_minibatch(batch_states, batch_actions)
-        return total_loss
+            batch_loss, batch_correct = self.do_minibatch(batch_states, batch_actions)
+            total_loss += batch_loss
+            total_correct += batch_correct
+        return total_loss, total_correct / len(self.train_actions)
 
 if __name__ == "__main__":
     np.random.seed(24)
@@ -166,10 +179,12 @@ if __name__ == "__main__":
     learner = Deep_Learner(states, actions, num_layers, num_nodes_per_layer)
 
     loss_arr = np.zeros(learning_epochs)
+    accuracy_arr = np.zeros(learning_epochs)
     for i in range(learning_epochs):
-        loss = learner.do_epoch()
-        print("i = " + str(i) + ", loss = " + str(loss))
+        loss, accuracy = learner.do_epoch()
+        print("i = " + str(i) + ", loss = " + str(loss) + ", accuracy = " + str(accuracy))
         loss_arr[i] = loss
+        accuracy_arr[i] = accuracy
 
     plt.plot(loss_arr)
     plt.title("Deep Learning: Loss by Epoch")
@@ -177,11 +192,36 @@ if __name__ == "__main__":
     plt.xlabel("Epoch Number")
     plt.xlim((0, learning_epochs))
     plt.ylim((0, max(loss_arr)))
-    plt.savefig("image/deep_plot.png")
+    plt.savefig("image/deep_loss_plot.png")
+    plt.clf()
 
-    correct = 0
+    plt.plot(accuracy_arr)
+    plt.title("Deep Learning: Accuracy by Epoch")
+    plt.ylabel("Accuracy")
+    plt.xlabel("Epoch Number")
+    plt.xlim((0, learning_epochs))
+    plt.savefig("image/deep_accuracy_plot.png")
+    plt.clf()
+
+    # get the confusion matrix
+    outputs = learner.get_action_nums(states)
+    confusion = np.zeros((3, 3), dtype=int)
     for i in range(len(actions)):
-        if learner.get_action_num(states[i]) == actions[i]:
-            correct += 1
-    print(correct)
-    print(len(actions))
+        confusion[actions[i]][outputs[i]] += 1
+    print(confusion)
+
+    num_test_games = 200
+    bounce_arr = np.zeros(num_test_games, dtype=int)
+    for i in range(num_test_games):
+        g = game.Game()
+        while not g.lost_game():
+            g.do_frame(learner.get_action(g.get_state()))
+        bounce_arr[i] = g.get_num_bounces()
+
+    plt.hist(bounce_arr, bins = np.max(bounce_arr) - 1)
+    plt.title("Deep Learning Distribution of bounces for " + str(num_test_games) + " test games")
+    plt.xlabel("Number of bounces")
+    plt.ylabel("Count")
+    plt.savefig("image/deep_hist.png")
+
+    print ("Average bounces = " + str(np.sum(bounce_arr) / num_test_games))
