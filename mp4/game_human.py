@@ -62,6 +62,7 @@ class GameHuman:
                 self.velocity_x = 0.03 if self.velocity_x > 0 else -0.03
 
             self.velocity_y = self.velocity_y + random.uniform(-.03, .03)
+            self.bounces += 1
             return
 
         elif (self.ball_x > 1 and self.paddle_y < self.ball_y < self.paddle_y + paddle_height):
@@ -72,7 +73,6 @@ class GameHuman:
                 self.velocity_x = 0.03 if self.velocity_x > 0 else -0.03
 
             self.velocity_y = self.velocity_y + random.uniform(-.03, .03)
-            self.current_reward = 1
             self.bounces += 1
             return
         self.current_reward = 0
@@ -82,9 +82,6 @@ class GameHuman:
 
     def get_discrete_state(self):
         return discrete_end_game_state if self.lost_game() else (int(self.ball_x * 12), int(self.ball_y * 12), -1 if self.velocity_x < 0 else 1, -1 if self.velocity_y < -0.015 else (1 if self.velocity_y > 0.015 else 0), 11 if self.paddle_y == 1 - paddle_height else int(12 * self.paddle_y / (1 - paddle_height)))
-
-    def get_current_reward(self):
-        return self.current_reward
 
     def get_num_bounces(self):
         return self.bounces
