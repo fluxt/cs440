@@ -6,8 +6,11 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
+# number of times the agent should try an action at a state
 exploration_count = 20
+# constant for our alpha learning-rate function
 C = 20
+# the discount factor for our agent
 gamma = 0.95
 
 num_training_games = 30000
@@ -69,39 +72,46 @@ class Q_Learner:
             g.do_frame(prev_action)
 
 
-def f_1(u, n):
+def f(u, n):
     if n < exploration_count:
         return float('inf')
     else:
         return u
 
-def example_alpha(n):
+def alpha(n):
     return C / (C + n)
 
 if __name__ == "__main__":
     random.seed(18)
-    q = Q_Learner(gamma, example_alpha, f_1)
+    q = Q_Learner(gamma, alpha, f)
 
+    plot_smoothing_size = 100
+    bounces_arr = np.zeros(num_training_games // plot_smoothing_size)
     sum = 0
-    max_bounces = 0
     for i in range(num_training_games):
         if (i % 1000 == 0):
-            print("" + str(i) + " : avg=" + str(sum / 1000) + " , max=" + str(max_bounces))
+            print("i=" + str(i))
+        if (i > 0 and i % plot_smoothing_size == 0):
+            bounces_arr[i // plot_smoothing_size] = sum / plot_smoothing_size
             sum = 0
-            max_bounces = 0
-        bounces = q.do_game()
-        sum += bounces
-        if (bounces > max_bounces):
-            max_bounces = bounces
+        sum += q.do_game()
 
-    bounces_list = np.zeros(num_test_games, dtype=int)
+    plt.plot(np.arange(0, num_training_games, plot_smoothing_size), bounces_arr)
+    plt.title("TD Q-Learning Bounces per Training Game")
+    plt.ylabel("Number of Bounces")
+    plt.xlabel("Game Number")
+    plt.xlim((0, num_training_games))
+    plt.savefig("image/q_plot.png")
+    plt.clf()
+
+    bounces_hist_arr = np.zeros(num_test_games, dtype=int)
     sum = 0
     for i in range(num_test_games):
         val = q.do_game()
-        bounces_list[i] = val
+        bounces_hist_arr[i] = val
         sum += val
 
-    plt.hist(bounces_list, bins = max(bounces_list) - 1)
+    plt.hist(bounces_hist_arr, bins = max(bounces_hist_arr) - 1)
     plt.title("TD Q-Learning Distribution of bounces for " + str(num_test_games) + " test games")
     plt.xlabel("Number of bounces")
     plt.ylabel("Count")

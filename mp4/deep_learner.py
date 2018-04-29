@@ -1,19 +1,24 @@
 import utils
 import game
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
-learning_epochs = 500
+learning_epochs = 1000
 
 weight_scale = 0.01
 learning_rate = .1
 batch_size = 100
+# number of inner layers for our neural network
 num_layers = 3
+# nourons per inner layer of our neural network
 num_nodes_per_layer = 256
 
 def affine_forward(A, W, b):
     return (A.dot(W)) + b
 
-# also returns (A, W, b) for caching
+# also returns (A, W) for caching
 def affine_forward_cache(A, W, b):
     return affine_forward(A, W, b), (A.copy(), W.copy())
 
@@ -74,6 +79,7 @@ class Deep_Learner:
 
     # layers is the number of inner layers
     def __init__(self, training_states, training_actions, layers, nodes_per_layer):
+        # set the means and standard deviations for normalizing the states
         self.means = np.mean(training_states, axis=0)
         self.std_deviations = np.std(training_states, axis=0)
 
@@ -81,17 +87,21 @@ class Deep_Learner:
         self.train_actions = training_actions
 
         self.layers = layers
+
+        # set up the weight matrix for each layer
         self.W = [0 for i in range(layers + 1)]
         self.W[0] = np.random.uniform(0, weight_scale, size=(5, nodes_per_layer))
         for i in range(1, layers):
             self.W[i] = np.random.uniform(0, weight_scale, size=(nodes_per_layer, nodes_per_layer))
         self.W[layers] = np.random.uniform(0, weight_scale, size=(nodes_per_layer, 3))
 
+        # set up the bias vectors for each layer
         self.b = [0 for i in range(layers + 1)]
         for i in range(layers):
             self.b[i] = np.zeros(nodes_per_layer)
         self.b[layers] = np.zeros(3)
 
+    # train the network on a batch of inputs
     # X = batch_states, y=batch_actions
     def do_minibatch(self, batch_states, batch_actions):
         # forward propogation
@@ -121,22 +131,23 @@ class Deep_Learner:
             self.b[i] -= learning_rate * db[i]
         return loss
 
-    def get_output(self, inputs):
+    # get the network's output vector for a given input
+    def get_action_num(self, inputs):
         inputs = self.normalize(inputs)
         A = inputs
         for layer_num in range(self.layers):
             Z = affine_forward(A, self.W[layer_num], self.b[layer_num])
             A = ReLU_forward(Z)
         F = affine_forward(A, self.W[self.layers], self.b[self.layers])
-        return F
-
-    def get_action_num(self, state):
-        return np.argmax(self.get_output(state))
+        return np.argmax(F)
 
     def get_action(self, state):
         return action_num_to_action(self.get_action_num(state))
 
+    # do an entire epoch of learning
+    # returns the sum of the losses for each batch
     def do_epoch(self):
+        # get a random order to put the data in
         order = np.arange(len(self.train_actions))
         np.random.shuffle(order)
         total_loss = 0
@@ -149,23 +160,24 @@ class Deep_Learner:
         return total_loss
 
 if __name__ == "__main__":
-    #np.random.seed(24)
+    np.random.seed(24)
 
     states, actions = utils.get_data()
     learner = Deep_Learner(states, actions, num_layers, num_nodes_per_layer)
 
-    out = learner.get_output(states[0:10])
-    print(out)
-
-    correct = 0
-    for i in range(len(actions)):
-        if learner.get_action_num(states[i]) == actions[i]:
-            correct += 1
-    print(correct)
-    print(len(actions))
-
+    loss_arr = np.zeros(learning_epochs)
     for i in range(learning_epochs):
-        print("i = " + str(i) + ", loss = " + str(learner.do_epoch()))
+        loss = learner.do_epoch()
+        print("i = " + str(i) + ", loss = " + str(loss))
+        loss_arr[i] = loss
+
+    plt.plot(loss_arr)
+    plt.title("Deep Learning: Loss by Epoch")
+    plt.ylabel("Total Loss")
+    plt.xlabel("Epoch Number")
+    plt.xlim((0, learning_epochs))
+    plt.ylim((0, max(loss_arr)))
+    plt.savefig("image/deep_plot.png")
 
     correct = 0
     for i in range(len(actions)):
@@ -173,6 +185,3 @@ if __name__ == "__main__":
             correct += 1
     print(correct)
     print(len(actions))
-
-    out = learner.get_output(states[0:10])
-    print(out)
