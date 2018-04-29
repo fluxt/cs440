@@ -1,5 +1,10 @@
 import game
 import math
+import random
+import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 
 def get_action(state):
     ball_x, ball_y, vel_x, vel_y, pad_y = state
@@ -27,11 +32,20 @@ def get_action(state):
         return game.Action.NOTHING
 
 if __name__ == "__main__":
+    random.seed(100)
+
     num_games = 200
-    sum = 0
+    hist_arr = np.zeros(num_games, dtype=int)
     for i in range(num_games):
         g = game.Game()
         while not g.lost_game():
             g.do_frame(get_action(g.get_state()))
-        sum += g.get_num_bounces()
-    print(sum / num_games)
+        hist_arr[i] = g.get_num_bounces()
+
+    plt.hist(hist_arr)
+    plt.title("Reflex Distribution of bounces for " + str(num_games) + " test games")
+    plt.xlabel("Number of bounces")
+    plt.ylabel("Count")
+    plt.savefig("image/reflex_hist.png")
+
+    print("Average bounces: " + str(np.sum(hist_arr) / 200))

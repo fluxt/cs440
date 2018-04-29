@@ -218,7 +218,7 @@ if __name__ == "__main__":
             g.do_frame(learner.get_action(g.get_state()))
         bounce_arr[i] = g.get_num_bounces()
 
-    plt.hist(bounce_arr, bins = np.max(bounce_arr) - 1)
+    plt.hist(bounce_arr, bins = np.max(bounce_arr) - np.min(bounce_arr))
     plt.title("Deep Learning Distribution of bounces for " + str(num_test_games) + " test games")
     plt.xlabel("Number of bounces")
     plt.ylabel("Count")

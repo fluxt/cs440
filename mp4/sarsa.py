@@ -88,7 +88,7 @@ if __name__ == "__main__":
 
     q = Sarsa_Learner(gamma, alpha, f)
 
-    plot_smoothing_size = 300
+    plot_smoothing_size = 200
     bounces_arr = np.zeros(num_training_games // plot_smoothing_size)
     sum = 0
     for i in range(num_training_games):
@@ -114,10 +114,10 @@ if __name__ == "__main__":
         bounces_hist_arr[i] = val
         sum += val
 
-    plt.hist(bounces_hist_arr, bins = max(bounces_hist_arr) - 1)
+    plt.hist(bounces_hist_arr, bins = np.max(bounces_hist_arr) - np.min(bounces_hist_arr))
     plt.title("SARSA Distribution of bounces for " + str(num_test_games) + " test games")
     plt.xlabel("Number of bounces")
     plt.ylabel("Count")
     plt.savefig("image/sarsa_hist.png")
 
-    print("Test average: " + str(sum / 200))
+    print("Test average: " + str(np.sum(bounces_hist_arr) / num_test_games))

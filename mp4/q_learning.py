@@ -85,7 +85,7 @@ if __name__ == "__main__":
     random.seed(18)
     q = Q_Learner(gamma, alpha, f)
 
-    plot_smoothing_size = 300
+    plot_smoothing_size = 200
     bounces_arr = np.zeros(num_training_games // plot_smoothing_size)
     sum = 0
     for i in range(num_training_games):
@@ -105,16 +105,13 @@ if __name__ == "__main__":
     plt.clf()
 
     bounces_hist_arr = np.zeros(num_test_games, dtype=int)
-    sum = 0
     for i in range(num_test_games):
-        val = q.do_game()
-        bounces_hist_arr[i] = val
-        sum += val
+        bounces_hist_arr[i] = q.do_game()
 
-    plt.hist(bounces_hist_arr, bins = max(bounces_hist_arr) - 1)
+    plt.hist(bounces_hist_arr, bins = np.max(bounces_hist_arr) - np.min(bounces_hist_arr))
     plt.title("TD Q-Learning Distribution of bounces for " + str(num_test_games) + " test games")
     plt.xlabel("Number of bounces")
     plt.ylabel("Count")
     plt.savefig("image/q_hist.png")
 
-    print("Test average: " + str(sum / 200))
+    print("Test average: " + str(np.sum(bounces_hist_arr) / num_test_games))
