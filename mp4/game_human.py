@@ -23,7 +23,10 @@ class GameHuman:
         self.bounces = 0
 
     def lost_game(self):
-        return (self.ball_x > 1 or self.ball_x < 0)
+        return self.ball_x > 1
+
+    def lost_game_human(self):
+        return self.ball_x < 0
 
     # returns the reward for the action taken (-1, 0, or 1)
     def do_frame(self, act, human):
@@ -79,6 +82,9 @@ class GameHuman:
 
     def get_state(self):
         return np.array([self.ball_x, self.ball_y, self.velocity_x, self.velocity_y, self.paddle_y])
+
+    def get_human_state(self):
+        return np.array([1.0-self.ball_x, self.ball_y, -self.velocity_x, self.velocity_y, self.human_y])
 
     def get_discrete_state(self):
         return discrete_end_game_state if self.lost_game() else (int(self.ball_x * 12), int(self.ball_y * 12), -1 if self.velocity_x < 0 else 1, -1 if self.velocity_y < -0.015 else (1 if self.velocity_y > 0.015 else 0), 11 if self.paddle_y == 1 - paddle_height else int(12 * self.paddle_y / (1 - paddle_height)))
